@@ -1,0 +1,65 @@
+C:\Users\Andrew\Documents\Visual Studio 2013\Projects\SourceProlongation\SourceProlongation\bin\Debug\SourceProlongation.exe
+C:\Users\Andrew\Documents\Visual Studio 2013\Projects\SourceProlongation\SourceProlongation\bin\Debug\SourceProlongation.pdb
+C:\Users\Andrew\Documents\Visual Studio 2013\Projects\SourceProlongation\SourceProlongation\bin\Debug\DocX.dll
+C:\Users\Andrew\Documents\Visual Studio 2013\Projects\SourceProlongation\SourceProlongation\bin\Debug\Xceed.Wpf.Toolkit.dll
+C:\Users\Andrew\Documents\Visual Studio 2013\Projects\SourceProlongation\SourceProlongation\obj\Debug\SourceProlongation.csprojResolveAssemblyReference.cache
+C:\Users\Andrew\Documents\Visual Studio 2013\Projects\SourceProlongation\SourceProlongation\obj\Debug\MainWindow.baml
+C:\Users\Andrew\Documents\Visual Studio 2013\Projects\SourceProlongation\SourceProlongation\obj\Debug\MainWindow.g.cs
+C:\Users\Andrew\Documents\Visual Studio 2013\Projects\SourceProlongation\SourceProlongation\obj\Debug\App.g.cs
+C:\Users\Andrew\Documents\Visual Studio 2013\Projects\SourceProlongation\SourceProlongation\obj\Debug\SourceProlongation_MarkupCompile.cache
+C:\Users\Andrew\Documents\Visual Studio 2013\Projects\SourceProlongation\SourceProlongation\obj\Debug\SourceProlongation.g.resources
+C:\Users\Andrew\Documents\Visual Studio 2013\Projects\SourceProlongation\SourceProlongation\obj\Debug\SourceProlongation.Properties.Resources.resources
+C:\Users\Andrew\Documents\Visual Studio 2013\Projects\SourceProlongation\SourceProlongation\obj\Debug\SourceProlongation.csproj.GenerateResource.Cache
+C:\Users\Andrew\Documents\Visual Studio 2013\Projects\SourceProlongation\SourceProlongation\obj\Debug\SourceProlongation.exe
+C:\Users\Andrew\Documents\Visual Studio 2013\Projects\SourceProlongation\SourceProlongation\obj\Debug\SourceProlongation.pdb
+C:\Users\Andrew\Documents\Visual Studio 2013\Projects\SourceProlongation\SourceProlongation\obj\Debug\Styles.baml
+C:\Users\Andrew\Documents\Visual Studio 2013\Projects\SourceProlongation\SourceProlongation\obj\Debug\App.baml
+C:\Users\Andrew\Documents\Visual Studio 2013\Projects\SourceProlongation\SourceProlongation\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\Andrew\Documents\Visual Studio 2013\Projects\SourceProlongation\SourceProlongation\obj\Debug\SourceProlongation_MarkupCompile.lref
+C:\Users\Andrew\Documents\Visual Studio 2013\Projects\SourceProlongation\SourceProlongation\bin\Debug\Xceed.Wpf.DataGrid.dll
+C:\Users\Andrew\Documents\Visual Studio 2013\Projects\SourceProlongation\SourceProlongation\obj\Debug\Combobox.baml
+D:\GitHub\SourceProlongation\SourceProlongation\obj\Debug\SourceProlongation.exe
+D:\GitHub\SourceProlongation\SourceProlongation\obj\Debug\SourceProlongation.pdb
+D:\GitHub\SourceProlongation\SourceProlongation\bin\Debug\SourceProlongation.exe
+D:\GitHub\SourceProlongation\SourceProlongation\bin\Debug\SourceProlongation.pdb
+D:\GitHub\SourceProlongation\SourceProlongation\obj\Debug\SourceProlongation.csprojResolveAssemblyReference.cache
+D:\GitHub\SourceProlongation\SourceProlongation\obj\Debug\MainWindow.g.cs
+D:\GitHub\SourceProlongation\SourceProlongation\obj\Debug\App.g.cs
+D:\GitHub\SourceProlongation\SourceProlongation\obj\Debug\SourceProlongation_MarkupCompile.cache
+D:\GitHub\SourceProlongation\SourceProlongation\obj\Debug\MainWindow.baml
+D:\GitHub\SourceProlongation\SourceProlongation\obj\Debug\SourceProlongation.g.resources
+D:\GitHub\SourceProlongation\SourceProlongation\obj\Debug\SourceProlongation.Properties.Resources.resources
+D:\GitHub\SourceProlongation\SourceProlongation\obj\Debug\SourceProlongation.csproj.GenerateResource.Cache
+D:\GitHub\SourceProlongation\SourceProlongation\obj\Debug\AddWindow.baml
+D:\GitHub\SourceProlongation\SourceProlongation\obj\Debug\AddWindow.g.cs
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\obj\Debug\SourceProlongation.exe
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\obj\Debug\SourceProlongation.pdb
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\bin\Debug\SourceProlongation.exe.config
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\bin\Debug\SourceProlongation.exe
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\bin\Debug\SourceProlongation.pdb
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\obj\Debug\App.baml
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\obj\Debug\App.g.cs
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\obj\Debug\SourceProlongation_MarkupCompile.cache
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\obj\Debug\SourceProlongation.g.resources
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\obj\Debug\SourceProlongation.Properties.Resources.resources
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\obj\Debug\SourceProlongation.csproj.GenerateResource.Cache
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\obj\Debug\View\MainWindowView.baml
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\obj\Debug\View\MainWindowView.g.cs
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\obj\Debug\Styles_Templates\Templates.baml
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\obj\Debug\View\OrderListView.baml
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\obj\Debug\View\OrderListView.g.cs
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\obj\Debug\SourceProlongation_MarkupCompile.lref
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\obj\Debug\View\OrderView.baml
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\obj\Debug\View\OrderView.g.cs
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\obj\Debug\SourceProlongation.csprojAssemblyReference.cache
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\obj\Debug\SourceProlongation.csproj.CoreCompileInputs.cache
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\obj\Debug\SourceProlongation.csproj.CopyComplete
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\bin\Debug\ControlzEx.dll
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\bin\Debug\MahApps.Metro.dll
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\bin\Debug\System.Windows.Interactivity.dll
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\bin\Debug\ControlzEx.pdb
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\bin\Debug\MahApps.Metro.pdb
+C:\Users\Andrew\Desktop\SourceProlongation-master\SourceProlongation-master\SourceProlongation\bin\Debug\MahApps.Metro.xml
