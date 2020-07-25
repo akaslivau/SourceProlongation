@@ -2,46 +2,87 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using SourceProlongation.Base;
+using SourceProlongation.Model;
 
 namespace SourceProlongation.ViewModel
 {
     public class SourceViewModel:ViewModelBase
     {
+        #region Other
+        private void UpdateProperty(string propertyName, object value)
+        {
+            using (var cntx = new SqlDataContext(Connection.ConnectionString))
+            {
+                var table = cntx.GetTable<Source>();
+                var item = table.Single(x => x.id == Id);
+
+                PropertyInfo prop = item.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
+                if (null != prop && prop.CanWrite)
+                {
+                    prop.SetValue(item, value, null);
+                }
+                cntx.SubmitChanges();
+            }
+        }
+        #endregion
+
         #region Fields
-        private readonly OrderViewModel _parent;
+        public int Id { get; }
+        public DateTime DocDate { get; }
+
+        private NucleideViewModel _nucleide = null;
+        public NucleideViewModel Nucleide
+        {
+            get => _nucleide;
+            set
+            {
+                _nucleide = value;
+                OnPropertyChanged("Nucleide");
+                UpdateProperty("nucleideId", value.Id);
+                RecalculateParameters();
+            }
+        }
 
 
         private bool _isChecled = false;
-        public bool IsChecked { get { return _isChecled;} set{ _isChecled = value; OnPropertyChanged("IsChecked");}}
+        public bool IsChecked { get => _isChecled;
+            set{ _isChecled = value; OnPropertyChanged("IsChecked");}}
 
 
         private string _type = "";
-        public string Type { get { return _type;} set{ _type = value; OnPropertyChanged("Type");}}
+        public string Type { get => _type;
+            set{ _type = value; OnPropertyChanged("Type");}}
 
         private string _number = "";
-        public string Number { get { return _number;} set{ _number = value; OnPropertyChanged("Number");}}
+        public string Number { get => _number;
+            set{ _number = value; OnPropertyChanged("Number");}}
 
         private string _passportNum = "";
-        public string PassportNum { get { return _passportNum;} set{ _passportNum = value; OnPropertyChanged("PassportNum");}}
+        public string PassportNum { get => _passportNum;
+            set{ _passportNum = value; OnPropertyChanged("PassportNum");}}
 
         private string _rank = "";
-        public string Rank { get { return _rank;} set{ _rank = value; OnPropertyChanged("Rank");}}
+        public string Rank { get => _rank;
+            set{ _rank = value; OnPropertyChanged("Rank");}}
 
         private int _madeYear = 1960;
-        public int MadeYear { get { return _madeYear;} set{ _madeYear = value; OnPropertyChanged("MadeYear");}}
+        public int MadeYear { get => _madeYear;
+            set{ _madeYear = value; OnPropertyChanged("MadeYear");}}
         
         private int _additionalPeriod = 5;
-        public int AdditionalPeriod { get { return _additionalPeriod;} set{ _additionalPeriod = value; OnPropertyChanged("AdditionalPeriod");}}
+        public int AdditionalPeriod { get => _additionalPeriod;
+            set{ _additionalPeriod = value; OnPropertyChanged("AdditionalPeriod");}}
 
         private DateTime _baseValueDate = DateTime.Now.AddYears(-5);
 
         public DateTime BaseValueDate
         {
-            get { return _baseValueDate; }
+            get => _baseValueDate;
             set
             {
                 _baseValueDate = value;
@@ -54,7 +95,7 @@ namespace SourceProlongation.ViewModel
 
         public double BaseValue
         {
-            get { return _baseValue; }
+            get => _baseValue;
             set
             {
                 _baseValue = value;
@@ -64,14 +105,15 @@ namespace SourceProlongation.ViewModel
         }
 
         private string _unit = "";
-        public string Unit { get { return _unit;} set{ _unit = value; OnPropertyChanged("Unit");}}
+        public string Unit { get => _unit;
+            set{ _unit = value; OnPropertyChanged("Unit");}}
 
 
         private double _measValue = 0;
 
         public double MeasValue
         {
-            get { return _measValue; }
+            get => _measValue;
             set
             {
                 _measValue = value;
@@ -84,7 +126,7 @@ namespace SourceProlongation.ViewModel
 
         public DateTime MeasDate
         {
-            get { return _measDate; }
+            get => _measDate;
             set
             {
                 _measDate = value;
@@ -94,16 +136,18 @@ namespace SourceProlongation.ViewModel
         }
 
         private string _docNumber = "";
-        public string DocNumber { get { return _docNumber;} set{ _docNumber = value; OnPropertyChanged("DocNumber");}}
+        public string DocNumber { get => _docNumber;
+            set{ _docNumber = value; OnPropertyChanged("DocNumber");}}
 
         private bool _isSvid = true;
-        public bool IsSvid { get { return _isSvid;} set{ _isSvid = value; OnPropertyChanged("IsSvid");}}
+        public bool IsSvid { get => _isSvid;
+            set{ _isSvid = value; OnPropertyChanged("IsSvid");}}
 
         private bool _isScienceFormat = true;
 
         public bool IsScienceFormat
         {
-            get { return _isScienceFormat; }
+            get => _isScienceFormat;
             set
             {
                 _isScienceFormat = value;
@@ -116,7 +160,7 @@ namespace SourceProlongation.ViewModel
 
         public int DigitCount
         {
-            get { return _digitCount; }
+            get => _digitCount;
             set
             {
                 _digitCount = value;
@@ -125,26 +169,13 @@ namespace SourceProlongation.ViewModel
             }
         }
 
-
-        private NucleideViewModel _nucleide = null;
-
-        public NucleideViewModel Nucleide
-        {
-            get { return _nucleide; }
-            set
-            {
-                _nucleide = value;
-                OnPropertyChanged("Nucleide");
-                RecalculateParameters();
-            }
-        }
-
         #endregion
 
         #region Отклонение
 
         private string _format = "F2";
-        public string Format { get { return _format;} set{ _format = value; OnPropertyChanged("Format");}}
+        public string Format { get => _format;
+            set{ _format = value; OnPropertyChanged("Format");}}
 
 
 
@@ -165,7 +196,8 @@ namespace SourceProlongation.ViewModel
         }
 
         private double _calcedVal = 0;
-        public double CalcedVal { get { return _calcedVal; } set { _calcedVal = value; OnPropertyChanged("CalcedVal"); } }
+        public double CalcedVal { get => _calcedVal;
+            set { _calcedVal = value; OnPropertyChanged("CalcedVal"); } }
 
         private void RecalculateParameters()
         {
@@ -173,12 +205,13 @@ namespace SourceProlongation.ViewModel
 
             var old = BaseValue;
             var days = (BaseValueDate - MeasDate).Days;
-            CalcedVal = old * Math.Pow(2, days / Nucleide.HalfLife);
+            CalcedVal = old * Math.Pow(2, days / Nucleide.HalfPeriod);
 
             Difference = Math.Round(100 * (MeasValue / CalcedVal - 1), 1) + " % (" + CalcedVal.ToString(Format) + ")";
         }
         private string _difference = "";
-        public string Difference { get { return _difference;} set{ _difference = value; OnPropertyChanged("Difference");}}
+        public string Difference { get => _difference;
+            set{ _difference = value; OnPropertyChanged("Difference");}}
 
         #endregion
 
@@ -202,7 +235,7 @@ namespace SourceProlongation.ViewModel
                 case 6:
                     return AdditionalPeriod.ToString();
                 case 7:
-                    return (2000 + _parent.Year + AdditionalPeriod).ToString();
+                    return (DocDate.AddYears(AdditionalPeriod)).ToShortDateString();
                 case 8:
                     return "-";
             }
@@ -244,43 +277,27 @@ namespace SourceProlongation.ViewModel
         }
         #endregion
 
-        public SourceViewModel()
+        public SourceViewModel(Source source, DateTime docDate)
         {
-            
+            Id = source.id;
+            DocDate = docDate;
+
+            _type = source.type;
+            _number = source.number;
+            _passportNum = source.passport;
+            _rank = source.rank;
+            _madeYear = source.madeYear;
+            _additionalPeriod = source.extensionPeriod;
+            _baseValueDate = source.baseValueDate;
+            _baseValue = source.baseValue;
+            _unit = source.unit;
+            _measValue = source.measValue;
+            _measDate = source.measDate;
+            _docNumber = source.docNumber;
+            _isSvid = source.isSvid;
+            _nucleide = Collections.NucleidesCollection.SingleOrDefault(x => x.Id == source.nucleideId);
         }
 
-        public SourceViewModel(OrderViewModel order):this()
-        {
-            _parent = order;
-        }
 
-
-        public SourceViewModel(SourceViewModel source, OrderViewModel parent):this(parent)
-        {
-            Type = source.Type;
-            Number = source.Number;
-            PassportNum = source.PassportNum;
-            if (source.Nucleide!=null && Collections.Nucleides.Any(x => x.Name == source.Nucleide.Name))
-            {
-                _nucleide = Collections.Nucleides.First(x => x.Name == source.Nucleide.Name);
-            }
-
-            MadeYear = source.MadeYear;
-            _baseValue = source.BaseValue;
-            _baseValueDate = source.BaseValueDate;
-            Unit = source.Unit;
-
-            _measValue = source.MeasValue;
-            _measDate = source.MeasDate;
-            DocNumber = source.DocNumber;
-            IsSvid = source.IsSvid;
-
-            IsScienceFormat = source.IsScienceFormat;
-            DigitCount = source.DigitCount;
-
-            AdditionalPeriod = source.AdditionalPeriod;
-            Rank = source.Rank;
-            RecalculateParameters();
-        }
     }
 }

@@ -3,9 +3,16 @@
                     xmlns:stylesTemplates="clr-namespace:SourceProlongation.Styles_Templates">
 
     <stylesTemplates:MyBooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" True="Visible" False="Collapsed" />
-    
+
+    <Thickness x:Key="ControlMargin"
+               Top="5"
+               Bottom="5"
+               Left="5"
+               Right="5"
+    />
+
     <Style TargetType="{x:Type TextBlock}" >
-        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Margin" Value="{StaticResource ControlMargin}"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
      </Style>
     

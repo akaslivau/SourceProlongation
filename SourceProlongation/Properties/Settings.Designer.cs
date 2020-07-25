@@ -23,13 +23,123 @@ namespace SourceProlongation.Properties {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=ANDREW-ПК\\SQLEXPRESS;Initial Catalog=vniim;Integrated Security=True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=ANDREW-PC\\SQLEXPRESS;Initial Catalog=vniim;Integrated Security=True")]
         public string vniimConnectionString {
             get {
                 return ((string)(this["vniimConnectionString"]));
+            }
+            set {
+                this["vniimConnectionString"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool lfNucleide {
+            get {
+                return ((bool)(this["lfNucleide"]));
+            }
+            set {
+                this["lfNucleide"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool lfType {
+            get {
+                return ((bool)(this["lfType"]));
+            }
+            set {
+                this["lfType"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool lfYear {
+            get {
+                return ((bool)(this["lfYear"]));
+            }
+            set {
+                this["lfYear"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool lfUnit {
+            get {
+                return ((bool)(this["lfUnit"]));
+            }
+            set {
+                this["lfUnit"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool lfPaspDate {
+            get {
+                return ((bool)(this["lfPaspDate"]));
+            }
+            set {
+                this["lfPaspDate"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool lfMeasDate {
+            get {
+                return ((bool)(this["lfMeasDate"]));
+            }
+            set {
+                this["lfMeasDate"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool lfIsSvid {
+            get {
+                return ((bool)(this["lfIsSvid"]));
+            }
+            set {
+                this["lfIsSvid"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool lfExtPeriod {
+            get {
+                return ((bool)(this["lfExtPeriod"]));
+            }
+            set {
+                this["lfExtPeriod"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool hideFinished {
+            get {
+                return ((bool)(this["hideFinished"]));
+            }
+            set {
+                this["hideFinished"] = value;
             }
         }
     }

@@ -1,122 +1,146 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using Novacode;
 using SourceProlongation.Base;
+using SourceProlongation.Model;
+using SourceProlongation.Properties;
 
 namespace SourceProlongation.ViewModel
 {
     public class OrderViewModel: ViewModelBase
     {
         #region Fields
-        private string _customer = "";
-        public string Customer
+        public int OrderId { get; }
+        public int SourceCount => Sources.Count;
+        private bool _hideFinished = Settings.Default.hideFinished;
+        public bool HideFinished
         {
-            get { return _customer; }
+            get => _hideFinished;
             set
             {
-                _customer = value;
-                OnPropertyChanged("Customer");
-                OnPropertyChanged("DisplayName");
+                if (_hideFinished == value) return;
+                _hideFinished = value;
+                OnPropertyChanged("HideFinished");
+                Settings.Default.hideFinished = value;
+                Settings.Default.Save();
             }
         }
 
-        //В родительном падеже
-        private string _customer_KOGO = "";
-        public string Customer_KOGO { get { return _customer_KOGO; } set { _customer_KOGO = value; OnPropertyChanged("Customer_KOGO"); } }
+        private ObservableCollection<SourceViewModel> _sources = new ObservableCollection<SourceViewModel>();
+        public ObservableCollection<SourceViewModel> Sources { get => _sources;
+            set { _sources = value; OnPropertyChanged("Sources"); } }
 
-        //В дательном падеже
-        private string _customer_KOMU = "";
-        public string Customer_KOMU { get { return _customer_KOMU; } set { _customer_KOMU = value; OnPropertyChanged("Customer_KOMU"); } }
+        private SourceViewModel _selectedSource;
+        public SourceViewModel SelectedSource { get => _selectedSource;
+            set { _selectedSource = value; OnPropertyChanged("SelectedSource"); } }
 
-        //В творительном падеже
-        private string _customer_KEM = "";
-        public string Customer_KEM { get { return _customer_KEM; } set { _customer_KEM = value; OnPropertyChanged("Customer_KEM"); } }
+        private Customer _selectedCustomer = null;
+        public Customer SelectedCustomer
+        {
+            get
+            {
+                return _selectedCustomer;
+            }
+            set
+            {
+                if (_selectedCustomer == value) return;
+                _selectedCustomer = value;
+                OnPropertyChanged("SelectedCustomer");
 
-
+                if(value!=null) UpdateProperty("customerId", value.id);
+            }
+        }
+        
         private int _number;
         public int Number
         {
-            get { return _number; }
+            get => _number;
             set
             {
                 _number = value;
                 OnPropertyChanged("Number");
-                OnPropertyChanged("ActNumber");
-                OnPropertyChanged("DisplayName");
+                UpdateProperty("actNumber", value);
+                OnPropertyChanged("IsActNumberValid");
             }
         }
 
         private int _year = Int32.Parse(DateTime.Now.ToString("yy"));
         public int Year
         {
-            get { return _year; }
+            get => _year;
             set
             {
                 _year = value;
                 OnPropertyChanged("Year");
-                OnPropertyChanged("ActNumber");
-                OnPropertyChanged("DisplayName");
+                UpdateProperty("year", value);
+                OnPropertyChanged("IsActNumberValid");
             }
         }
 
-
-        public string ActNumber { get { return Number + "/" + Year; } }
-
+        public bool IsActNumberValid
+        {
+            get
+            {
+                using (var cntx = new SqlDataContext(Connection.ConnectionString))
+                {
+                    return cntx.GetTable<Order>().Count(x => x.actNumber == Number && x.year == Year) == 1;
+                }
+            }
+        }
+        
         private DateTime _docDate = DateTime.Now;
-        public DateTime DocDate { get { return _docDate;} set{ _docDate = value; OnPropertyChanged("DocDate");}}
+        public DateTime DocDate { get => _docDate;
+            set
+            {
+                _docDate = value; OnPropertyChanged("DocDate");
+               // UpdateProperty("docDate", value);
+            }}
 
-        private DateTime _beginWorkDate = DateTime.Now.AddDays(-14);
+        private DateTime _beginWorkDate = DateTime.Now.AddDays(-28);
 
         public DateTime BeginWorkDate
         {
-            get { return _beginWorkDate; }
+            get => _beginWorkDate;
             set
             {
-                if (value > EndWorkDate) return;
                 if (value > DocDate) return;
 
                 _beginWorkDate = value;
                 OnPropertyChanged("BeginWorkDate");
+                UpdateProperty("beginDate", value);
             }
         }
+        
+        private string _other;
+        public string Other { get => _other;
+            set{ _other = value; OnPropertyChanged("Other");}}
 
-        private DateTime _endWorkDate = DateTime.Now;
-
-        public DateTime EndWorkDate
+        private string _status;
+        public string Status
         {
-            get { return _endWorkDate; }
+            get
+            {
+                return _status;
+            }
             set
             {
-                if (value < BeginWorkDate) return;
-                if (value > DocDate) return;
-
-                _endWorkDate = value;
-                OnPropertyChanged("EndWorkDate");
+                if (_status == value) return;
+                _status = value;
+                OnPropertyChanged("Status");
+                UpdateProperty("status", value);
             }
         }
-
-
-        private string _comment = "";
-        public string Comment { get { return _comment;} set{ _comment = value; OnPropertyChanged("Comment");}}
-
-
-        private string _status = Collections.Statuses[1];
-        public string Status { get { return _status;} set{ _status = value; OnPropertyChanged("Status");}}
-
-
-        public int SourceCount
-        {
-            get { return Sources.Count; }
-        }
-
-
         #endregion
 
         #region Executors
@@ -124,11 +148,13 @@ namespace SourceProlongation.ViewModel
 
 
         private ObservableCollection<ExecutorViewModel> _executors = new ObservableCollection<ExecutorViewModel>();
-        public ObservableCollection<ExecutorViewModel> Executors { get { return _executors;} set{ _executors = value; OnPropertyChanged("Executors");}}
+        public ObservableCollection<ExecutorViewModel> Executors { get => _executors;
+            set{ _executors = value; OnPropertyChanged("Executors");}}
 
 
         private ExecutorViewModel _selectedExecutor;
-        public ExecutorViewModel SelectedExecutor { get { return _selectedExecutor;} set{ _selectedExecutor = value; OnPropertyChanged("SelectedExecutor");}}
+        public ExecutorViewModel SelectedExecutor { get => _selectedExecutor;
+            set{ _selectedExecutor = value; OnPropertyChanged("SelectedExecutor");}}
 
         public ICommand AddExecutorCommand { get; private set; }
 
@@ -147,46 +173,295 @@ namespace SourceProlongation.ViewModel
         }
 
         #endregion
-
-        #region Sources
-        private ObservableCollection<SourceViewModel> _sources = new ObservableCollection<SourceViewModel>();
-        public ObservableCollection<SourceViewModel> Sources { get { return _sources;} set{ _sources = value; OnPropertyChanged("Sources");}}
-
-        private SourceViewModel _selectedSource;
-        public SourceViewModel SelectedSource { get { return _selectedSource;} set{ _selectedSource = value; OnPropertyChanged("SelectedSource");}}
-
-        public ICommand AddSourceCommand { get; private set; }
-        public ICommand CopySourceCommand { get; private set; }
-
-        public ICommand SerializeCommand { get; private set; }
-        public ICommand DeserializeCommand { get; private set; }
-        #endregion
-
-        #region Checkboxes for final set
-        private bool _hasLicense;
-        public bool HasLicense { get { return _hasLicense; } set { _hasLicense = value; OnPropertyChanged("HasLicense"); OnPropertyChanged("IsDocumentSetOk"); } }
-
-        private bool _hasSpravka;
-        public bool HasSpravka { get { return _hasSpravka; } set { _hasSpravka = value; OnPropertyChanged("HasSpravka"); OnPropertyChanged("IsDocumentSetOk"); } }
-
-        private bool _hasPassports;
-        public bool HasPassports { get { return _hasPassports; } set { _hasPassports = value; OnPropertyChanged("HasPassports"); OnPropertyChanged("IsDocumentSetOk"); } }
-
-        private bool _hasRadProtokol;
-        public bool HasRadProtokol { get { return _hasRadProtokol; } set { _hasRadProtokol = value; OnPropertyChanged("HasRadProtokol"); OnPropertyChanged("IsDocumentSetOk"); } }
-
-        public bool IsDocumentSetOk
+        
+        #region LikeFirstBoolFlags
+        private bool _lfNucleide = Settings.Default.lfNucleide;
+        public bool LfNucleide
         {
-            get { return HasLicense && HasSpravka && HasPassports && HasRadProtokol; }
+            get => _lfNucleide;
+            set
+            {
+                if (_lfNucleide == value) return;
+                _lfNucleide = value;
+                OnPropertyChanged("LfNucleide");
+                Settings.Default.lfNucleide = value;
+                Settings.Default.Save();
+            }
         }
 
-        public ICommand SaveDocumentSetCommand { get; private set; }
-
-        private void SaveDocumentSet()
+        private bool _lfType = Settings.Default.lfType;
+        public bool LfType
         {
-            var dirPath = "[Пр-" + Number + "-" + DocDate.ToString("yy") + " " + Customer + "]";
+            get => _lfType;
+            set
+            {
+                if (_lfType == value) return;
+                _lfType = value;
+                OnPropertyChanged("LfType");
+                Settings.Default.lfType = value;
+                Settings.Default.Save();
+            }
+        }
+
+        private bool _lfYear = Settings.Default.lfYear;
+        public bool LfYear
+        {
+            get => _lfYear;
+            set
+            {
+                if (_lfYear == value) return;
+                _lfYear = value;
+                OnPropertyChanged("LfYear");
+                Settings.Default.lfYear = value;
+                Settings.Default.Save();
+            }
+        }
+
+        private bool _lfUnit = Settings.Default.lfUnit;
+        public bool LfUnit
+        {
+            get => _lfUnit;
+            set
+            {
+                if (_lfUnit == value) return;
+                _lfUnit = value;
+                OnPropertyChanged("LfUnit");
+                Settings.Default.lfUnit = value;
+                Settings.Default.Save();
+            }
+        }
+
+        private bool _lfPaspDate = Settings.Default.lfPaspDate;
+        public bool LfPaspDate
+        {
+            get => _lfPaspDate;
+            set
+            {
+                if (_lfPaspDate == value) return;
+                _lfPaspDate = value;
+                OnPropertyChanged("LfPaspDate");
+                Settings.Default.lfPaspDate
+ = value;
+                Settings.Default.Save();
+            }
+        }
+
+        private bool _lfMeasDate = Settings.Default.lfMeasDate;
+        public bool LfMeasDate
+        {
+            get => _lfMeasDate;
+            set
+            {
+                if (_lfMeasDate == value) return;
+                _lfMeasDate = value;
+                OnPropertyChanged("LfMeasDate");
+                Settings.Default.lfMeasDate = value;
+                Settings.Default.Save();
+            }
+        }
+
+        private bool _lfIsvid = Settings.Default.lfIsSvid;
+        public bool LfIsSvid
+        {
+            get => _lfIsvid;
+            set
+            {
+                if (_lfIsvid == value) return;
+                _lfIsvid = value;
+                OnPropertyChanged("LfIsSvid");
+                Settings.Default.lfIsSvid = value;
+                Settings.Default.Save();
+            }
+        }
+
+        private bool _lfExtPeriod = Settings.Default.lfExtPeriod;
+        public bool LfExtPeriod
+        {
+            get => _lfExtPeriod;
+            set
+            {
+                if (_lfExtPeriod == value) return;
+                _lfExtPeriod = value;
+                OnPropertyChanged("LfExtPeriod");
+                Settings.Default.lfExtPeriod = value;
+                Settings.Default.Save();
+            }
+        }
+        #endregion 
+
+        #region Commands
+        public ICommand AddSourceCommand { get; private set; }
+        public ICommand RemoveSourceCommand { get; private set; }
+        public ICommand CopySourceCommand { get; private set; }
+        public ICommand LikeFirstCommand { get; private set; }
+
+        public ICommand MakeAktCommand { get; private set; }
+        public ICommand MakeDocsCommand { get; private set; }
+        public ICommand MakeMazkiCommand { get; private set; }
+
+        private void AddSource(object obj)
+        {
+            using (var cntx = new SqlDataContext(Connection.ConnectionString))
+            {
+                var model = new Source()
+                {
+                    orderId = OrderId,
+                    nucleideId = 0,
+                    type = "",
+                    number = "",
+                    passport = "",
+                    rank = "",
+                    madeYear = -1,
+                    extensionPeriod = -1,
+                    baseValueDate = DateTime.MinValue,
+                    baseValue = 0,
+                    unit = "",
+                    measValue = 0,
+                    measDate = DateTime.MinValue,
+                    docNumber = "",
+                    isSvid = true
+                };
+
+                var sourcesTable = cntx.GetTable<Source>();
+                sourcesTable.InsertOnSubmit(model);
+                cntx.SubmitChanges();
+
+                Sources.Add(new SourceViewModel(model, _docDate));
+                SelectedSource = Sources.Last();
+            }
+        }
+
+        private void RemoveSource(object obj)
+        {
+            using (var cntx = new SqlDataContext(Connection.ConnectionString))
+            {
+                var sourcesTable = cntx.GetTable<Source>();
+                var toDelete = sourcesTable.Single(x => x.id == SelectedSource.Id);
+                sourcesTable.DeleteOnSubmit(toDelete);
+                cntx.SubmitChanges();
+
+                Sources.Remove(SelectedSource);
+            }
+        }
+
+        private void CopySource(object obj)
+        {
+            using (var cntx = new SqlDataContext(Connection.ConnectionString))
+            {
+                var model = new Source()
+                {
+                    orderId = OrderId,
+                    nucleideId = SelectedSource.Nucleide.Id,
+                    type = SelectedSource.Type,
+                    number = SelectedSource.Number,
+                    passport = SelectedSource.PassportNum,
+                    rank = SelectedSource.Rank,
+                    madeYear = SelectedSource.MadeYear,
+                    extensionPeriod = SelectedSource.AdditionalPeriod,
+                    baseValueDate = SelectedSource.BaseValueDate,
+                    baseValue = SelectedSource.BaseValue,
+                    unit = SelectedSource.Unit,
+                    measValue = SelectedSource.MeasValue,
+                    measDate = SelectedSource.MeasDate,
+                    docNumber = SelectedSource.Number,
+                    isSvid = SelectedSource.IsSvid
+                };
+
+                var sourcesTable = cntx.GetTable<Source>();
+                sourcesTable.InsertOnSubmit(model);
+                cntx.SubmitChanges();
+
+                Sources.Add(new SourceViewModel(model, _docDate));
+                SelectedSource = Sources.Last();
+            }
+        }
+
+        private void LikeFirst(object a)
+        {
+            IList items = (IList)a;
+            var sources = items.Cast<SourceViewModel>().ToList();
+            if (!sources.Any()) return;
+
+            var first = sources.First();
+            using (var cntx = new SqlDataContext(Connection.ConnectionString))
+            {
+                var table = cntx.GetTable<Source>();
+                for (int i = 1; i < sources.Count; i++)
+                {
+                    var single = table.Single(x => x.id == sources[i].Id);
+                    var cur = Sources.Single(x => x.Id == sources[i].Id);
+
+                    if (LfYear)
+                    {
+                        single.madeYear = first.MadeYear;
+                        cur.MadeYear = first.MadeYear;
+                    }
+
+                    if (LfExtPeriod)
+                    {
+                        single.extensionPeriod = first.AdditionalPeriod;
+                        cur.AdditionalPeriod = first.AdditionalPeriod;
+                    }
+
+                    if (LfType)
+                    {
+                        single.type = first.Type;
+                        cur.Type = first.Type;
+                    }
+
+                    if (LfUnit)
+                    {
+                        single.unit = first.Unit;
+                        cur.Unit = first.Unit;
+                    }
+
+                    if (LfPaspDate)
+                    {
+                        single.baseValueDate = first.BaseValueDate;
+                        cur.BaseValueDate = first.BaseValueDate;
+                    }
+
+                    if (LfMeasDate)
+                    {
+                        single.measDate = first.MeasDate;
+                        cur.MeasDate = first.MeasDate;
+                    }
+
+                    if (LfIsSvid)
+                    {
+                        single.isSvid = first.IsSvid;
+                        cur.IsSvid = first.IsSvid;
+                    }
+
+                    if (LfNucleide)
+                    {
+                        single.nucleideId = first.Nucleide.Id;
+                        
+                    }
+                    cntx.SubmitChanges();
+
+                    if (LfNucleide)
+                    {
+                        cur.Nucleide = first.Nucleide;
+                    }
+                }
+            }
+        }
+
+        private void MakeAct(object obj)
+        {
+            var dirPath = "[Пр-" + Number + "-" + DocDate.ToString("yy") + " " + SelectedCustomer.name + "]";
             dirPath = MyStatic.CleanPath(dirPath);
-            Directory.CreateDirectory(dirPath);
+            if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
+
+            MakeAct(dirPath);
+        }
+
+        private void MakeDocs(object obj)
+        {
+            var dirPath = "[Пр-" + Number + "-" + DocDate.ToString("yy") + " " + SelectedCustomer.name + "]";
+            dirPath = MyStatic.CleanPath(dirPath);
+            if(!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
 
             MakeAct(dirPath);
             MakeExpConcl(dirPath);
@@ -194,19 +469,19 @@ namespace SourceProlongation.ViewModel
             MakeProtokol(dirPath);
             MakeProtokolApplication(dirPath);
         }
-
+        
         private void ReplaceBaseTags(DocX doc)
         {
             doc.ReplaceText("@Num", Number.ToString());
             doc.ReplaceText("@Year", DocDate.ToString("yy"));
             doc.ReplaceText("@DateAsWords", DocDate.ToString("dd MMMM yyyy") + " г.");
 
-            doc.ReplaceText("@Cust_KOGO", Customer_KOGO);
-            doc.ReplaceText("@Cust_KOMU", Customer_KOMU);
-            doc.ReplaceText("@Cust_KEM", Customer_KEM);
+            doc.ReplaceText("@Cust_KOGO", SelectedCustomer.name_kogo);
+            doc.ReplaceText("@Cust_KOMU", SelectedCustomer.name_komu);
+            doc.ReplaceText("@Cust_KEM", SelectedCustomer.name_kem);
 
             doc.ReplaceText("@DateFrom", BeginWorkDate.ToShortDateString());
-            doc.ReplaceText("@DateTo", EndWorkDate.ToShortDateString());
+            doc.ReplaceText("@DateTo", DocDate.ToShortDateString());
 
             doc.ReplaceText("@SVID_AND_SERT_TAG",
                 Sources.All(x => x.IsSvid) ?
@@ -215,10 +490,7 @@ namespace SourceProlongation.ViewModel
                 );
 
         }
-
-
-
-        public void MakeAct(string dir)
+        private void MakeAct(string dir)
         {
             string actFile = @"Data\" + Collections.FileNames["Act"] + EXT;
             if (!File.Exists(actFile)) return;
@@ -227,8 +499,7 @@ namespace SourceProlongation.ViewModel
             ReplaceBaseTags(doc);
             doc.SaveAs(dir + "\\" + Collections.FileNames["Act"] + EXT);
         }
-
-        public void MakeExpConcl(string dir)
+        private void MakeExpConcl(string dir)
         {
             string file = @"Data\" + Collections.FileNames["ExpConcl"] + EXT;
             if (!File.Exists(file)) return;
@@ -237,10 +508,7 @@ namespace SourceProlongation.ViewModel
             ReplaceBaseTags(doc);
             doc.SaveAs(dir + "\\" + Collections.FileNames["ExpConcl"] + EXT);
         }
-
-        private const int TableFontsize = 12;
-
-        public void MakeExpConclApplication(string dir)
+        private void MakeExpConclApplication(string dir)
         {
             string file = @"Data\" + Collections.FileNames["ExpConclApplication"] + EXT;
             if (!File.Exists(file)) return;
@@ -268,7 +536,6 @@ namespace SourceProlongation.ViewModel
 
             doc.SaveAs(dir + "\\" + Collections.FileNames["ExpConclApplication"] + EXT);
         }
-
         private void MakeProtokol(string dir)
         {
             string file = @"Data\" + Collections.FileNames["Protokol"] + EXT;
@@ -325,7 +592,6 @@ namespace SourceProlongation.ViewModel
 
             doc.SaveAs(dir + "\\" + Collections.FileNames["Protokol"] + EXT);
         }
-
         private void MakeProtokolApplication(string dir)
         {
             string file = @"Data\" + Collections.FileNames["ProtokolApplication"] + EXT;
@@ -333,9 +599,7 @@ namespace SourceProlongation.ViewModel
 
             var doc = DocX.Load(file);
             ReplaceBaseTags(doc);
-
-
-
+            
             var table = doc.Tables[0];
             int rowIndex = 3;
             foreach (var source in Sources)
@@ -399,122 +663,68 @@ namespace SourceProlongation.ViewModel
             doc.SaveAs(dir + "\\" + Collections.FileNames["ProtokolApplication"] + EXT);
         }
         #endregion
-
-        #region Table move
-        public ICommand MoveUpCommand { get; private set; }
-        public ICommand MoveDownCommand { get; private set; }
         
-        private void MoveUp()
-        {
-            var indexes = new List<int>();
-            for (int i = 0; i < Sources.Count; i++)
-            {
-                if(Sources[i].IsChecked) indexes.Add(i);
-            }
-
-            indexes = indexes.Where(x => x > 0).ToList();
-            if (indexes.Count == 0) return;
-
-            for (int i = 0; i < indexes.Count; i++)
-            {
-                var index = indexes[i];
-                var itemToMove = Sources[index];
-                Sources.RemoveAt(index);
-                Sources.Insert(index - 1, itemToMove);
-            }
-            SelectedSource = Sources[indexes[0] - 1];
-        }
-
-        private void MoveDown()
-        {
-            var indexes = new List<int>();
-            for (int i = SourceCount-1; i >= 0; i--)
-            {
-                if (Sources[i].IsChecked) indexes.Add(i);
-            }
-            
-            indexes = indexes.Where(x => x < Sources.Count - 1).ToList();
-            if (indexes.Count == 0) return;
-
-            for (int i = 0; i < indexes.Count; i++)
-            {
-                var index = indexes[i];
-                var itemToMove = Sources[index];
-                Sources.RemoveAt(index);
-                Sources.Insert(index + 1, itemToMove);
-            }
-            SelectedSource = Sources[indexes[0] + 1];
-        }
-        #endregion
-
-        public ICommand SaveJsonCommand { get; private set; }
-
         public OrderViewModel(Order order)
         {
+            //TODO: скрывать завершенные по-человечески
+            //TODO: список исполнителей
+            //TODO: генератор расчета стоимости
+            //TODO: расчет значений
+            //TODO: ранки и поверочные схемы
+
+            OrderId = order.id;
+            Sources.CollectionChanged += (a, b) => { OnPropertyChanged("SourceCount"); };
+
+            _number = order.actNumber;
+            _year = order.year;
+            _other = order.other;
+            _docDate = order.docDate;
+            _beginWorkDate = order.beginDate;
+            _status = order.status;
+            
             using (var cntx = new SqlDataContext(Connection.ConnectionString))
             {
+                var customersTable = cntx.GetTable<Customer>();
+                _selectedCustomer = customersTable.SingleOrDefault(x => x.id == order.customerId);
+
                 var cust = order.customerId < 0 ? "[!] " + order.oldCustomerName
                     : cntx.GetTable<Customer>().Single(x => x.id == order.customerId).name;
                 base.DisplayName = cust + " " + order.actNumber + "/" + order.year;
+
+                var sources = cntx.GetTable<Source>().Where(x => x.orderId == order.id).ToList();
+                foreach (var source in sources)
+                {
+                    Sources.Add(new SourceViewModel(source, _docDate));
+                }
+                if (Sources.Any()) SelectedSource = Sources[0];
             }
 
-/*
-
-            CanBeClosed = true;
-            //Исполнители
-            AddExecutorCommand = new RelayCommand(a => AddExecutor());
-            RemoveExecutorCommand = new RelayCommand(a => RemoveExecutor());
-
-            //Источники
-            Sources.CollectionChanged += (a, b) => OnPropertyChanged("SourceCount");
-            AddSourceCommand = new RelayCommand(a => Sources.Add(new SourceViewModel(this)));
-            CopySourceCommand = new RelayCommand(a => Sources.Add(new SourceViewModel(SelectedSource, this)),
-                a => SelectedSource != null);
-
-            SerializeCommand = new RelayCommand(a =>
-            {
-                var sDlg = new SaveFileDialog();
-                sDlg.Filter = "Источник (.source)|*.source";
-                sDlg.FileName = SelectedSource.Type + " №" + SelectedSource.Number;
-                if (sDlg.ShowDialog() == true)
-                {
-                    var res = JsonConvert.SerializeObject(SelectedSource);
-                    File.WriteAllText(sDlg.FileName, res);
-                }
-            },
-                a => SelectedSource != null);
-
-            DeserializeCommand = new RelayCommand(a =>
-            {
-                var oDlg = new OpenFileDialog();
-                oDlg.Filter = "Источник (.source)|*.source";
-                if (oDlg.ShowDialog() == true)
-                {
-                    var source = JsonConvert.DeserializeObject<SourceViewModel>(File.ReadAllText(oDlg.FileName));
-                    Sources.Add(new SourceViewModel(source, this));
-                }
-            });
-
-            //Создание комплекта
-            SaveDocumentSetCommand = new RelayCommand(a => SaveDocumentSet(), a => IsDocumentSetOk);
-
-            //Перемещение источников по таблице
-            MoveUpCommand = new RelayCommand(a=>MoveUp());
-            MoveDownCommand = new RelayCommand(a=>MoveDown());
-
-
-            //Закрытие окна
-            SaveJsonCommand = new RelayCommand(a =>
-            {
-                var res = JsonConvert.SerializeObject(this);
-
-                var fileName = Number + "_" + DocDate.ToString("yy") + " " + Customer;
-                fileName = MyStatic.CleanPath(fileName);
-                File.WriteAllText(Strings.ORDER_FOLDER + "//" + fileName, res);
-            });
-            RequestClose += (sender, args) => SaveJsonCommand.Execute(null);*/
+            AddSourceCommand = new RelayCommand(AddSource);
+            RemoveSourceCommand = new RelayCommand(RemoveSource, x=>SelectedSource!=null);
+            CopySourceCommand = new RelayCommand(CopySource, x => SelectedSource != null);
+            LikeFirstCommand = new RelayCommand(LikeFirst, x=>SelectedSource != null);
+            MakeAktCommand = new RelayCommand(MakeAct, a=> SelectedCustomer !=null && IsActNumberValid);
+            MakeDocsCommand = new RelayCommand(MakeDocs, a => SelectedCustomer != null && IsActNumberValid);
+            MakeMazkiCommand = new RelayCommand(a => { MessageBox.Show("Not implemented!");});
         }
-
+        
         public const string EXT = ".docx";
+        private const int TableFontsize = 12;
+
+        private void UpdateProperty(string propertyName, object value)
+        {
+            using (var cntx = new SqlDataContext(Connection.ConnectionString))
+            {
+                var table = cntx.GetTable<Order>();
+                var item = table.Single(x => x.id == OrderId);
+
+                PropertyInfo prop = item.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
+                if (null != prop && prop.CanWrite)
+                {
+                    prop.SetValue(item, value, null);
+                }
+                cntx.SubmitChanges();
+            }
+        }
     }
 }

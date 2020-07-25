@@ -79,8 +79,9 @@
     </ApplicationDefinition>
     <Compile Include="Base\RelayCommand.cs" />
     <Compile Include="Base\ViewModelBase.cs" />
-    <Compile Include="Collections.cs" />
     <Compile Include="Connection.cs" />
+    <Compile Include="Model\Collections.cs" />
+    <Compile Include="Model\Statuses.cs" />
     <Compile Include="MyStatic.cs" />
     <Compile Include="Sql.designer.cs">
       <AutoGen>True</AutoGen>
@@ -89,20 +90,19 @@
     </Compile>
     <Compile Include="Strings.cs" />
     <Compile Include="Styles_Templates\Converters.cs" />
+    <Compile Include="Usercontrols\CustomerBox.xaml.cs">
+      <DependentUpon>CustomerBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Usercontrols\SourceBox.xaml.cs">
+      <DependentUpon>SourceBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\ExecutorViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\NucleideViewModel.cs" />
-    <Compile Include="ViewModel\OrderListViewModel.cs" />
     <Compile Include="ViewModel\OrderViewModel.cs" />
     <Compile Include="ViewModel\SourceViewModel.cs" />
     <Compile Include="View\MainWindowView.xaml.cs">
       <DependentUpon>MainWindowView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\OrderListView.xaml.cs">
-      <DependentUpon>OrderListView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\OrderView.xaml.cs">
-      <DependentUpon>OrderView.xaml</DependentUpon>
     </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -112,15 +112,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Usercontrols\CustomerBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Usercontrols\SourceBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\MainWindowView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\OrderListView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\OrderView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -163,6 +163,7 @@
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

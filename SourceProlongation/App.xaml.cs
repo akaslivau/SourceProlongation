@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Data;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using SourceProlongation.Properties;
 using SourceProlongation.View;
@@ -20,7 +22,11 @@ namespace SourceProlongation
         {
             base.OnStartup(e);
 
-            Connection.Initialize(Settings.Default.vniimConnectionString);
+            var conString = File.Exists("connection")
+                ? File.ReadAllText("connection", Encoding.GetEncoding("windows-1251"))
+                : Settings.Default.vniimConnectionString;
+
+            Connection.Initialize(conString);
 
             var window = new MainWindowView();
 
