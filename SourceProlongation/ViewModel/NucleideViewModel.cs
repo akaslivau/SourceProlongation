@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using SourceProlongation.Base;
 
 namespace SourceProlongation.ViewModel
@@ -56,6 +52,7 @@ namespace SourceProlongation.ViewModel
 
         public NucleideViewModel(Nucleide nucleide)
         {
+            if (nucleide == null) return;
             Id = nucleide.id;
             _name = nucleide.name;
             _halfPeriod = nucleide.halfPeriod;

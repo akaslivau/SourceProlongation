@@ -8,13 +8,16 @@
         xmlns:usercontrols="clr-namespace:SourceProlongation.Usercontrols"
         Title="Продление источников"
         WindowState="Maximized"
+        Name="_this"
         >
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Closing">
             <i:InvokeCommandAction Command="{Binding WindowClosingCommand}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    <Grid>
+    <TabControl TabStripPlacement="Bottom">
+        <TabItem Header="Основное">
+            <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -24,16 +27,21 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Menu Grid.Row="0" Grid.ColumnSpan="3" DataContext="{Binding Selected}">
-            <MenuItem Header="Оформить акт" Command="{Binding MakeAktCommand}"/>
-            <MenuItem Header="Оформить все документы" Command="{Binding MakeDocsCommand}"/>
-            <MenuItem Header="Оформить протокол мазков" Command="{Binding MakeMazkiCommand}"/>
+        <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Orientation="Horizontal">
+            <Menu DataContext="{Binding Selected}" >
+                <MenuItem Header="Оформить акт" Command="{Binding MakeAktCommand}" />
+                <MenuItem Header="Оформить все документы" Command="{Binding MakeDocsCommand}" />
+                <MenuItem Header="Оформить протокол мазков" Command="{Binding MakeMazkiCommand}"/>
+            </Menu>
+            <Menu >
             <MenuItem Header="Скрывать завершенные" 
                       IsCheckable="True" 
                       IsChecked="{Binding HideFinished, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-        </Menu>
+            </Menu>
+        </StackPanel>
+
         <ListView Grid.Row="1" Grid.Column="0"
-                  ItemsSource="{Binding Items}"
+                  ItemsSource="{Binding TableView}"
                   SelectedItem="{Binding Selected, UpdateSourceTrigger=PropertyChanged}"
                   DisplayMemberPath="DisplayName"
                   Name="OrdersList"
@@ -41,35 +49,35 @@
         <GridSplitter Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="5"
                       Background="YellowGreen" Opacity="0.3"
                       />
-        <TabControl Grid.Row="1" Grid.Column="2" DataContext="{Binding Selected}">
-            <TabItem Header="Источники">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <Menu Grid.Row="0">
-                        <MenuItem Header="Источники">
-                            <MenuItem Header="Добавить" Command="{Binding AddSourceCommand}"/>
-                            <MenuItem Header="Удалить" Command="{Binding RemoveSourceCommand}"/>
-                            <MenuItem Header="Копировать" Command="{Binding CopySourceCommand}"/>
-                        </MenuItem>
-                        <MenuItem Header="Как у первого выделенного">
-                        <MenuItem Header="Запустить" Command="{Binding LikeFirstCommand}"
+        <TabControl Grid.Row="1" Grid.Column="2"  DataContext="{Binding Selected}">
+                    <TabItem Header="Источники">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Menu Grid.Row="0">
+                                <MenuItem Header="Источники">
+                                    <MenuItem Header="Добавить" Command="{Binding AddSourceCommand}"/>
+                                    <MenuItem Header="Удалить" Command="{Binding RemoveSourceCommand}"/>
+                                    <MenuItem Header="Копировать" Command="{Binding CopySourceCommand}"/>
+                                </MenuItem>
+                                <MenuItem Header="Как у первого выделенного">
+                                    <MenuItem Header="Запустить" Command="{Binding LikeFirstCommand}"
                                   CommandParameter="{Binding ElementName=SourceTable, Path=SelectedItems}"
                                   />
-                        <Separator/>
-                            <MenuItem Header="Нуклид" IsCheckable="True" IsChecked="{Binding LfNucleide, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                            <MenuItem Header="Тип" IsCheckable="True" IsChecked="{Binding LfType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                            <MenuItem Header="Год" IsCheckable="True" IsChecked="{Binding LfYear, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                            <MenuItem Header="Ед. изм." IsCheckable="True" IsChecked="{Binding LfUnit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                            <MenuItem Header="Дата изг." IsCheckable="True" IsChecked="{Binding LfPaspDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                            <MenuItem Header="Дата измерения" IsCheckable="True" IsChecked="{Binding LfMeasDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                            <MenuItem Header="Свид-во?" IsCheckable="True" IsChecked="{Binding LfIsSvid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                            <MenuItem Header="Продлить на" IsCheckable="True" IsChecked="{Binding LfExtPeriod, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        </MenuItem>
-                    </Menu>
-                    <DataGrid Grid.Row="1"
+                                    <Separator/>
+                                    <MenuItem Header="Нуклид" IsCheckable="True" IsChecked="{Binding LfNucleide, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <MenuItem Header="Тип" IsCheckable="True" IsChecked="{Binding LfType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <MenuItem Header="Год" IsCheckable="True" IsChecked="{Binding LfYear, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <MenuItem Header="Ед. изм." IsCheckable="True" IsChecked="{Binding LfUnit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <MenuItem Header="Дата изг." IsCheckable="True" IsChecked="{Binding LfPaspDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <MenuItem Header="Дата измерения" IsCheckable="True" IsChecked="{Binding LfMeasDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <MenuItem Header="Свид-во?" IsCheckable="True" IsChecked="{Binding LfIsSvid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <MenuItem Header="Продлить на" IsCheckable="True" IsChecked="{Binding LfExtPeriod, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                </MenuItem>
+                            </Menu>
+                            <DataGrid Grid.Row="1"
                               Name="SourceTable"
                               Margin="{StaticResource ControlMargin}"
                               AutoGenerateColumns="False"
@@ -80,141 +88,127 @@
                               SelectedItem="{Binding Selected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               RowHeaderWidth="0"
                               SelectionUnit="FullRow">
-                    <DataGrid.Columns>
-                <DataGridCheckBoxColumn Binding="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                <DataGrid.Columns>
+                                    <DataGridCheckBoxColumn Binding="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                 Header="V"
                                                     Width="50"/>
 
-                <DataGridTextColumn Binding="{Binding PassportNum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    <DataGridTextColumn Binding="{Binding PassportNum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         Header="Паспорт"
                                         />
-                <DataGridTemplateColumn Header="Нуклид" >
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Nucleide}"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                    <DataGridTemplateColumn.CellEditingTemplate>
-                        <DataTemplate>
-                            <usercontrols:SourceBox VerticalAlignment="Center"
+                                    <DataGridTemplateColumn Header="Нуклид" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Nucleide}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <DataTemplate>
+                                                <usercontrols:SourceBox VerticalAlignment="Center"
                                                       FilterSource="{Binding Source={x:Static model:Collections.NucleidesCollection}}"
                                                       SelectedSource="{Binding Nucleide, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellEditingTemplate>
-                </DataGridTemplateColumn>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
 
-                <DataGridTextColumn Binding="{Binding Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    <DataGridTextColumn Binding="{Binding Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         Header="Тип"
                                         />
-                <DataGridTextColumn Binding="{Binding Number, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    <DataGridTextColumn Binding="{Binding Number, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         Header="Зав. №"
                                         />
-                <DataGridTextColumn Binding="{Binding MadeYear, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    <DataGridTextColumn Binding="{Binding MadeYear, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         Header="Год"
                                         />
 
-                <DataGridTemplateColumn Header="Пасп. знач.">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <xctk:DoubleUpDown 
+                                    <DataGridTemplateColumn Header="Пасп. знач.">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <xctk:DoubleUpDown 
                                             Value="{Binding BaseValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                             />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
 
-                <DataGridTextColumn Binding="{Binding Unit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    <DataGridTextColumn Binding="{Binding Unit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         Header="Ед. изм."
                                         />
 
-                <DataGridTemplateColumn Header="На дату">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <DatePicker Width="100"
+                                    <DataGridTemplateColumn Header="На дату">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <DatePicker Width="100"
                                 SelectedDate="{Binding BaseValueDate, UpdateSourceTrigger=PropertyChanged}"
                                />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Тек. знач.">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <xctk:DoubleUpDown 
+                                    <DataGridTemplateColumn Header="Тек. знач.">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <xctk:DoubleUpDown 
                                             Value="{Binding MeasValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                             />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="На дату">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <DatePicker Width="100"
+                                    <DataGridTemplateColumn Header="На дату">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <DatePicker Width="100"
                                 SelectedDate="{Binding MeasDate, UpdateSourceTrigger=PropertyChanged}"
                                />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
 
-                <DataGridTextColumn Binding="{Binding DocNumber}"
+                                    <DataGridTextColumn Binding="{Binding DocNumber}"
                                         Header="№ док-та"
                                         />
 
-                <DataGridCheckBoxColumn Binding="{Binding IsSvid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                Header="Поверка"
->
-                </DataGridCheckBoxColumn>
+                                    <DataGridCheckBoxColumn Binding="{Binding IsSvid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                Header="Поверка?"/>
 
-                <!-- use custom combo box column to get better combos. Use ItemsSourceBinding as your binding template to be applied to each combo -->
 
-                <DataGridTextColumn Binding="{Binding AdditionalPeriod, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        Header="Доп. срок"
+                                    <DataGridTextColumn Binding="{Binding ExtensionPeriod, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Header="Доп. срок"/>
+
+                                    <DataGridTextColumn Binding="{Binding Difference, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Header="Δ, %"
                                         />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Данные">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Номер акта" Margin="{StaticResource ControlMargin}"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Год" Margin="{StaticResource ControlMargin}"/>
+                            <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Заказчик" Margin="{StaticResource ControlMargin}" />
+                            <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Дата начала экспертизы" Margin="{StaticResource ControlMargin}"/>
+                            <TextBlock Grid.Row="4" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Дата окончания экспертизы" Margin="{StaticResource ControlMargin}"/>
+                            <TextBlock Grid.Row="5" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Статус" Margin="{StaticResource ControlMargin}"/>
+                            <TextBlock Grid.Row="6" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Примечание" Margin="{StaticResource ControlMargin}"/>
 
-                <DataGridCheckBoxColumn Binding="{Binding IsScienceFormat, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                Header="Exp">
-
-                </DataGridCheckBoxColumn>
-
-                <DataGridTextColumn Binding="{Binding DigitCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        Header="Знач. цифр"
-                                        />
-
-                <DataGridTextColumn Binding="{Binding Difference, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        Header="Отклонение"
-                                        />
-            </DataGrid.Columns>
-        </DataGrid>
-                </Grid>
-            </TabItem>
-            <TabItem Header="Данные">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Номер акта" Margin="{StaticResource ControlMargin}"/>
-                    <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Год" Margin="{StaticResource ControlMargin}"/>
-                    <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Заказчик" Margin="{StaticResource ControlMargin}" />
-                    <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Дата начала экспертизы" Margin="{StaticResource ControlMargin}"/>
-                    <TextBlock Grid.Row="4" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Дата окончания экспертизы" Margin="{StaticResource ControlMargin}"/>
-                    <TextBlock Grid.Row="5" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Статус" Margin="{StaticResource ControlMargin}"/>
-                    <TextBlock Grid.Row="6" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Примечание" Margin="{StaticResource ControlMargin}"/>
-                    <TextBlock Grid.Row="7" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Исполнители" Margin="{StaticResource ControlMargin}"/>
-
-                    <xctk:IntegerUpDown Grid.Row="0" Grid.Column="1"
+                            <xctk:IntegerUpDown Grid.Row="0" Grid.Column="1"
                                         Minimum="1"
                                         Value="{Binding Number, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         Margin="{StaticResource ControlMargin}"
@@ -222,7 +216,7 @@
                                         HorizontalAlignment="Left"
                                         />
 
-                    <xctk:IntegerUpDown Grid.Row="1" Grid.Column="1"
+                            <xctk:IntegerUpDown Grid.Row="1" Grid.Column="1"
                                         Minimum="1"
                                         Value="{Binding Year, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         Margin="{StaticResource ControlMargin}"
@@ -230,14 +224,14 @@
                                         HorizontalAlignment="Left"
                     />
 
-                    <usercontrols:CustomerBox  Grid.Row="2" Grid.Column="1"
+                            <usercontrols:CustomerBox  Grid.Row="2" Grid.Column="1"
                                                FilterSource="{Binding Source={x:Static model:Collections.Customers}}"
                                                SelectedCustomer="{Binding SelectedCustomer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                Margin="{StaticResource ControlMargin}"
                                                HorizontalAlignment="Left"
                     />
 
-                    <DatePicker Grid.Row="3" Grid.Column="1"
+                            <DatePicker Grid.Row="3" Grid.Column="1"
                                         Width="250"
                                         HorizontalAlignment="Left"
                                         Margin="{StaticResource ControlMargin}"
@@ -245,14 +239,14 @@
 
                     />
 
-                    <DatePicker Grid.Row="4" Grid.Column="1"
+                            <DatePicker Grid.Row="4" Grid.Column="1"
                                 Width="250"
                                 HorizontalAlignment="Left"
                                 Margin="{StaticResource ControlMargin}"
                                 SelectedDate="{Binding DocDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     />
 
-                    <ComboBox Grid.Row="5" Grid.Column="1" 
+                            <ComboBox Grid.Row="5" Grid.Column="1" 
                               Width="250"
                               Height="25"
                               HorizontalAlignment="Left"
@@ -261,7 +255,7 @@
                               SelectedItem="{Binding Path=Status, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     />
 
-                    <TextBox Grid.Row="6" Grid.Column="1"
+                            <TextBox Grid.Row="6" Grid.Column="1"
                              Text="{Binding Other, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              Margin="{StaticResource ControlMargin}"
                              TextWrapping="Wrap"
@@ -270,8 +264,52 @@
                              Height="100"
                              />
 
-                </Grid>
-            </TabItem>
-        </TabControl>
+                            <GroupBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Header="Исполнители">
+                                <ListBox  
+                             ItemsSource="{Binding Executors}"
+                             Margin="{StaticResource ControlMargin}"
+                             SelectionMode="Extended">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <CheckBox Name="check" IsChecked="{Binding IsChecked, Mode=TwoWay}" Margin="3" VerticalAlignment="Center" />
+                                                <ContentPresenter Content="{Binding Value}" Margin="1"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </GroupBox>
+
+                        </Grid>
+                    </TabItem>
+                </TabControl>
     </Grid>
+        </TabItem>
+        <TabItem Header="Расчет стоимости">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                    <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" >
+                        <MenuItem Header="Сохранить в PDF"/>
+                    </Menu>
+
+                <ListView Grid.Row="1" Grid.Column="0"
+                  ItemsSource="{Binding TableView}"
+                  SelectedItem="{Binding Selected, UpdateSourceTrigger=PropertyChanged}"
+                  DisplayMemberPath="DisplayName"
+                  />
+                <GridSplitter Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="5"
+                      Background="YellowGreen" Opacity="0.3"
+                      />
+
+            </Grid>
+        </TabItem>
+    </TabControl>
 </mah:MetroWindow>

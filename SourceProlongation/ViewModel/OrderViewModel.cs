@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
-using Microsoft.Win32;
-using Newtonsoft.Json;
 using Novacode;
 using SourceProlongation.Base;
 using SourceProlongation.Model;
@@ -23,19 +19,6 @@ namespace SourceProlongation.ViewModel
         #region Fields
         public int OrderId { get; }
         public int SourceCount => Sources.Count;
-        private bool _hideFinished = Settings.Default.hideFinished;
-        public bool HideFinished
-        {
-            get => _hideFinished;
-            set
-            {
-                if (_hideFinished == value) return;
-                _hideFinished = value;
-                OnPropertyChanged("HideFinished");
-                Settings.Default.hideFinished = value;
-                Settings.Default.Save();
-            }
-        }
 
         private ObservableCollection<SourceViewModel> _sources = new ObservableCollection<SourceViewModel>();
         public ObservableCollection<SourceViewModel> Sources { get => _sources;
@@ -61,7 +44,14 @@ namespace SourceProlongation.ViewModel
                 if(value!=null) UpdateProperty("customerId", value.id);
             }
         }
-        
+
+        private CheckableObservableCollection<Executor> _executors = null;
+        public CheckableObservableCollection<Executor> Executors
+        {
+            get => _executors;
+            set => _executors = value;
+        }
+
         private int _number;
         public int Number
         {
@@ -143,37 +133,6 @@ namespace SourceProlongation.ViewModel
         }
         #endregion
 
-        #region Executors
-        public ExecutorViewModel SelectedComboboxExecutor { get; set; }
-
-
-        private ObservableCollection<ExecutorViewModel> _executors = new ObservableCollection<ExecutorViewModel>();
-        public ObservableCollection<ExecutorViewModel> Executors { get => _executors;
-            set{ _executors = value; OnPropertyChanged("Executors");}}
-
-
-        private ExecutorViewModel _selectedExecutor;
-        public ExecutorViewModel SelectedExecutor { get => _selectedExecutor;
-            set{ _selectedExecutor = value; OnPropertyChanged("SelectedExecutor");}}
-
-        public ICommand AddExecutorCommand { get; private set; }
-
-        public ICommand RemoveExecutorCommand { get; private set; }
-
-        private void AddExecutor()
-        {
-            if (Executors.Any(x => x.Name == SelectedComboboxExecutor.Name)) return;
-            Executors.Add(new ExecutorViewModel(SelectedComboboxExecutor.Position, SelectedComboboxExecutor.Name));
-        }
-
-        private void RemoveExecutor()
-        {
-            if (SelectedExecutor == null) return;
-            Executors.Remove(SelectedExecutor);
-        }
-
-        #endregion
-        
         #region LikeFirstBoolFlags
         private bool _lfNucleide = Settings.Default.lfNucleide;
         public bool LfNucleide
@@ -357,7 +316,7 @@ namespace SourceProlongation.ViewModel
                     passport = SelectedSource.PassportNum,
                     rank = SelectedSource.Rank,
                     madeYear = SelectedSource.MadeYear,
-                    extensionPeriod = SelectedSource.AdditionalPeriod,
+                    extensionPeriod = SelectedSource.ExtensionPeriod,
                     baseValueDate = SelectedSource.BaseValueDate,
                     baseValue = SelectedSource.BaseValue,
                     unit = SelectedSource.Unit,
@@ -399,8 +358,8 @@ namespace SourceProlongation.ViewModel
 
                     if (LfExtPeriod)
                     {
-                        single.extensionPeriod = first.AdditionalPeriod;
-                        cur.AdditionalPeriod = first.AdditionalPeriod;
+                        single.extensionPeriod = first.ExtensionPeriod;
+                        cur.ExtensionPeriod = first.ExtensionPeriod;
                     }
 
                     if (LfType)
@@ -462,14 +421,22 @@ namespace SourceProlongation.ViewModel
             var dirPath = "[Пр-" + Number + "-" + DocDate.ToString("yy") + " " + SelectedCustomer.name + "]";
             dirPath = MyStatic.CleanPath(dirPath);
             if(!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
-
+            
             MakeAct(dirPath);
             MakeExpConcl(dirPath);
             MakeExpConclApplication(dirPath);
             MakeProtokol(dirPath);
             MakeProtokolApplication(dirPath);
         }
-        
+
+        private void UpdateExecutors()
+        {
+            var executors = Executors.CheckedItems.Cast<CheckWrapper<Executor>>().ToList().Select(x => x.Value)
+                .Select(x => x.id).ToList();
+            var newList = string.Join(";", executors);
+            UpdateProperty("executors", newList);
+        }
+
         private void ReplaceBaseTags(DocX doc)
         {
             doc.ReplaceText("@Num", Number.ToString());
@@ -545,7 +512,8 @@ namespace SourceProlongation.ViewModel
             ReplaceBaseTags(doc);
 
             var executorsTable = doc.Tables[0];
-            for (int k = 0; k < Executors.Count; k++)
+            var jobExecutors = Executors.CheckedItems.Cast<CheckWrapper<Executor>>().ToList();
+            for (int k = 0; k < jobExecutors.Count; k++)
             {
                 for (int i = 0; i < 3; i++)
                 {
@@ -573,17 +541,18 @@ namespace SourceProlongation.ViewModel
                     executorsTable.Rows[i].Cells[2].SetBorder(TableCellBorderType.Bottom, podpBorder);
             }
 
-            for (int k = 0; k < Executors.Count; k++)
+            
+            for (int k = 0; k < jobExecutors.Count; k++)
             {
-                var executor = Executors[k];
-                var p1 = executorsTable.Rows[1 + k * 3].Cells[0].Paragraphs[0].Append(executor.Position);
+                var executor = jobExecutors[k].Value;
+                var p1 = executorsTable.Rows[1 + k * 3].Cells[0].Paragraphs[0].Append(executor.post);
                 p1.FontSize(14);
 
                 var p2 = executorsTable.Rows[2 + k * 3].Cells[2].Paragraphs[0].Append("(подпись)");
                 p2.FontSize(14);
                 p2.Alignment = Alignment.center;
 
-                var p3 = executorsTable.Rows[1 + k * 3].Cells[4].Paragraphs[0].Append(executor.Name);
+                var p3 = executorsTable.Rows[1 + k * 3].Cells[4].Paragraphs[0].Append(executor.fio);
                 p3.FontSize(14);
             }
 
@@ -605,7 +574,6 @@ namespace SourceProlongation.ViewModel
             foreach (var source in Sources)
             {
                 table.InsertRow(rowIndex);
-
                 var row = table.Rows[rowIndex];
 
                 for (int i = 0; i < 13; i++)
@@ -620,7 +588,8 @@ namespace SourceProlongation.ViewModel
 
             //Исполнители
             var executorsTable = doc.Tables[1];
-            for (int k = 0; k < Executors.Count; k++)
+            var jobExecutors = Executors.CheckedItems.Cast<CheckWrapper<Executor>>().ToList();
+            for (int k = 0; k < jobExecutors.Count; k++)
             {
                 for (int i = 0; i < 2; i++)
                 {
@@ -648,13 +617,14 @@ namespace SourceProlongation.ViewModel
                     executorsTable.Rows[i].Cells[1].SetBorder(TableCellBorderType.Bottom, podpBorder);
             }
 
-            for (int k = 0; k < Executors.Count; k++)
+            
+            for (int k = 0; k < jobExecutors.Count; k++)
             {
-                var executor = Executors[k];
-                var p1 = executorsTable.Rows[1 + k * 2].Cells[0].Paragraphs[0].Append(executor.Position);
+                var executor = jobExecutors[k].Value;
+                var p1 = executorsTable.Rows[1 + k * 2].Cells[0].Paragraphs[0].Append(executor.post);
                 p1.FontSize(12);
 
-                var p3 = executorsTable.Rows[1 + k * 2].Cells[3].Paragraphs[0].Append(executor.Name);
+                var p3 = executorsTable.Rows[1 + k * 2].Cells[3].Paragraphs[0].Append(executor.fio);
                 p3.FontSize(12);
             }
 
@@ -666,10 +636,7 @@ namespace SourceProlongation.ViewModel
         
         public OrderViewModel(Order order)
         {
-            //TODO: скрывать завершенные по-человечески
-            //TODO: список исполнителей
             //TODO: генератор расчета стоимости
-            //TODO: расчет значений
             //TODO: ранки и поверочные схемы
 
             OrderId = order.id;
@@ -687,6 +654,25 @@ namespace SourceProlongation.ViewModel
                 var customersTable = cntx.GetTable<Customer>();
                 _selectedCustomer = customersTable.SingleOrDefault(x => x.id == order.customerId);
 
+                _executors = new CheckableObservableCollection<Executor>();
+                foreach (var executor in cntx.GetTable<Executor>())
+                {
+                    _executors.Add(executor);
+                }
+
+                if (order.executors.Length > 0)
+                {
+                    var ids = order.executors.Split(';').Select(int.Parse).ToList();
+                    foreach (var checkWrapper in _executors)
+                    {
+                        if (ids.Contains(checkWrapper.Value.id))
+                        {
+                            checkWrapper.IsChecked = true;
+                        }
+                    }
+                }
+                _executors.CheckedChangedEvent += (a, b) => UpdateExecutors();
+
                 var cust = order.customerId < 0 ? "[!] " + order.oldCustomerName
                     : cntx.GetTable<Customer>().Single(x => x.id == order.customerId).name;
                 base.DisplayName = cust + " " + order.actNumber + "/" + order.year;
@@ -694,7 +680,9 @@ namespace SourceProlongation.ViewModel
                 var sources = cntx.GetTable<Source>().Where(x => x.orderId == order.id).ToList();
                 foreach (var source in sources)
                 {
-                    Sources.Add(new SourceViewModel(source, _docDate));
+                    var added = new SourceViewModel(source, _docDate);
+                    added.RecalculateParameters();
+                    Sources.Add(added);
                 }
                 if (Sources.Any()) SelectedSource = Sources[0];
             }

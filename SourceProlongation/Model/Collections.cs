@@ -65,8 +65,7 @@ namespace SourceProlongation.Model
                 return _customers;
             }
         }
-
-
+        
         public static ObservableCollection<string> Statuses { get; } = new ObservableCollection<string>()
         {
             Status.Created.ToString(),

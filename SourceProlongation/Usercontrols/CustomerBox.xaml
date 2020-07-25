@@ -9,7 +9,7 @@
              FocusManager.FocusedElement="{Binding ElementName=TextBox}"
              d:DesignHeight="450" d:DesignWidth="800">
     <DockPanel DataContext="{Binding ElementName=_this}" HorizontalAlignment="Left">
-        <TextBox Width="300" Height="25" KeyUp="TextBox_KeyUp" Name="TextBox" DockPanel.Dock="Top" />
+        <TextBox Width="250" Height="25" KeyUp="TextBox_KeyUp" Name="TextBox" DockPanel.Dock="Top" />
         <Popup Name="SuggestPopup"
                PlacementTarget="{Binding ElementName=TextBox}" 
                Placement="Bottom"

@@ -80,6 +80,7 @@
     <Compile Include="Base\RelayCommand.cs" />
     <Compile Include="Base\ViewModelBase.cs" />
     <Compile Include="Connection.cs" />
+    <Compile Include="Model\CheckableObservableCollection.cs" />
     <Compile Include="Model\Collections.cs" />
     <Compile Include="Model\Statuses.cs" />
     <Compile Include="MyStatic.cs" />

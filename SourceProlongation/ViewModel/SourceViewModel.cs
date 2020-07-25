@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using SourceProlongation.Base;
 using SourceProlongation.Model;
 
@@ -47,39 +42,81 @@ namespace SourceProlongation.ViewModel
                 RecalculateParameters();
             }
         }
-
-
-        private bool _isChecled = false;
-        public bool IsChecked { get => _isChecled;
-            set{ _isChecled = value; OnPropertyChanged("IsChecked");}}
-
-
+        
         private string _type = "";
-        public string Type { get => _type;
-            set{ _type = value; OnPropertyChanged("Type");}}
+        public string Type
+        {
+            get => _type;
+            set
+            {
+                _type = value;
+                OnPropertyChanged("Type");
+                UpdateProperty("type", value);
+            }
+        }
 
         private string _number = "";
-        public string Number { get => _number;
-            set{ _number = value; OnPropertyChanged("Number");}}
+        public string Number
+        {
+            get => _number;
+            set
+            {
+                _number = value;
+                OnPropertyChanged("Number");
+                UpdateProperty("number", value);
+            }
+        }
 
         private string _passportNum = "";
-        public string PassportNum { get => _passportNum;
-            set{ _passportNum = value; OnPropertyChanged("PassportNum");}}
+        public string PassportNum
+        {
+            get => _passportNum;
+            set
+            {
+                _passportNum = value;
+                OnPropertyChanged("PassportNum");
+                UpdateProperty("passport", value);
+            }
+        }
 
         private string _rank = "";
-        public string Rank { get => _rank;
-            set{ _rank = value; OnPropertyChanged("Rank");}}
+        public string Rank
+        {
+            get => _rank;
+            set
+            {
+                _rank = value;
+                OnPropertyChanged("Rank");
+                UpdateProperty("rank", value);
+            }
+        }
 
-        private int _madeYear = 1960;
-        public int MadeYear { get => _madeYear;
-            set{ _madeYear = value; OnPropertyChanged("MadeYear");}}
-        
-        private int _additionalPeriod = 5;
-        public int AdditionalPeriod { get => _additionalPeriod;
-            set{ _additionalPeriod = value; OnPropertyChanged("AdditionalPeriod");}}
+        private int _madeYear = -1;
+        public int MadeYear
+        {
+            get => _madeYear;
+            set
+            {
+                _madeYear = value;
+                OnPropertyChanged("MadeYear");
+                UpdateProperty("madeYear", value);
+            }
+        }
+
+        private int _extensionPeriod = 5;
+
+        public int ExtensionPeriod
+        {
+            get => _extensionPeriod;
+            set
+            {
+                _extensionPeriod = value;
+                OnPropertyChanged("ExtensionPeriod");
+                UpdateProperty("extensionPeriod", value);
+            }
+        }
 
         private DateTime _baseValueDate = DateTime.Now.AddYears(-5);
-
         public DateTime BaseValueDate
         {
             get => _baseValueDate;
@@ -88,11 +125,11 @@ namespace SourceProlongation.ViewModel
                 _baseValueDate = value;
                 OnPropertyChanged("BaseValueDate");
                 RecalculateParameters();
+                UpdateProperty("baseValueDate", value);
             }
         }
 
         private double _baseValue = 0;
-
         public double BaseValue
         {
             get => _baseValue;
@@ -101,16 +138,24 @@ namespace SourceProlongation.ViewModel
                 _baseValue = value;
                 OnPropertyChanged("BaseValue");
                 RecalculateParameters();
+                UpdateProperty("baseValue", value);
             }
         }
 
         private string _unit = "";
-        public string Unit { get => _unit;
-            set{ _unit = value; OnPropertyChanged("Unit");}}
+        public string Unit
+        {
+            get => _unit;
+            set
+            {
+                _unit = value;
+                OnPropertyChanged("Unit");
+                UpdateProperty("unit", value);
+            }
+        }
 
 
         private double _measValue = 0;
-
         public double MeasValue
         {
             get => _measValue;
@@ -119,11 +164,11 @@ namespace SourceProlongation.ViewModel
                 _measValue = value;
                 OnPropertyChanged("MeasValue");
                 RecalculateParameters();
+                UpdateProperty("measValue", value);
             }
         }
 
         private DateTime _measDate = DateTime.Now;
-
         public DateTime MeasDate
         {
             get => _measDate;
@@ -132,74 +177,41 @@ namespace SourceProlongation.ViewModel
                 _measDate = value;
                 OnPropertyChanged("MeasDate");
                 RecalculateParameters();
+                UpdateProperty("measDate", value);
             }
         }
 
         private string _docNumber = "";
-        public string DocNumber { get => _docNumber;
-            set{ _docNumber = value; OnPropertyChanged("DocNumber");}}
+        public string DocNumber
+        {
+            get => _docNumber;
+            set
+            {
+                _docNumber = value;
+                OnPropertyChanged("DocNumber");
+                UpdateProperty("docNumber", value);
+            }
+        }
 
         private bool _isSvid = true;
-        public bool IsSvid { get => _isSvid;
-            set{ _isSvid = value; OnPropertyChanged("IsSvid");}}
-
-        private bool _isScienceFormat = true;
-
-        public bool IsScienceFormat
+        public bool IsSvid
         {
-            get => _isScienceFormat;
+            get => _isSvid;
             set
             {
-                _isScienceFormat = value;
-                OnPropertyChanged("IsScienceFormat");
-                UpdateFormat();
+                _isSvid = value;
+                OnPropertyChanged("IsSvid");
+                UpdateProperty("isSvid", value);
             }
         }
-
-        private int _digitCount = 2;
-
-        public int DigitCount
-        {
-            get => _digitCount;
-            set
-            {
-                _digitCount = value;
-                OnPropertyChanged("DigitCount");
-                UpdateFormat();
-            }
-        }
-
         #endregion
 
         #region Отклонение
-
-        private string _format = "F2";
-        public string Format { get => _format;
-            set{ _format = value; OnPropertyChanged("Format");}}
-
-
-
-        public void UpdateFormat()
-        {
-            if (!IsScienceFormat)
-            {
-                Format = "F" + DigitCount;
-            }
-            string reshetka = "";
-            for (int i = 0; i < DigitCount; i++)
-            {
-                reshetka += "#";
-            }
-            Format = "0." + reshetka + "E+00";
-
-            Difference = Math.Round(100 * (MeasValue / CalcedVal - 1), 1) + " % (" + CalcedVal.ToString(Format) + ")";
-        }
-
         private double _calcedVal = 0;
         public double CalcedVal { get => _calcedVal;
             set { _calcedVal = value; OnPropertyChanged("CalcedVal"); } }
 
-        private void RecalculateParameters()
+        public void RecalculateParameters()
         {
             if (Nucleide == null) return;
 
@@ -207,7 +219,7 @@ namespace SourceProlongation.ViewModel
             var days = (BaseValueDate - MeasDate).Days;
             CalcedVal = old * Math.Pow(2, days / Nucleide.HalfPeriod);
 
-            Difference = Math.Round(100 * (MeasValue / CalcedVal - 1), 1) + " % (" + CalcedVal.ToString(Format) + ")";
+            Difference = Math.Round(100 * (MeasValue / CalcedVal - 1), 1) + " %";
         }
         private string _difference = "";
         public string Difference { get => _difference;
@@ -233,9 +245,9 @@ namespace SourceProlongation.ViewModel
                 case 5:
                     return MadeYear.ToString();
                 case 6:
-                    return AdditionalPeriod.ToString();
+                    return ExtensionPeriod.ToString();
                 case 7:
-                    return (DocDate.AddYears(AdditionalPeriod)).ToShortDateString();
+                    return (DocDate.AddYears(ExtensionPeriod)).ToShortDateString();
                 case 8:
                     return "-";
             }
@@ -257,7 +269,7 @@ namespace SourceProlongation.ViewModel
                 case 4:
                     return PassportNum;
                 case 5:
-                    return BaseValue.ToString(Format) + " " + Unit;
+                    return BaseValue.ToString("F2") + " " + Unit;
                 case 6:
                     return Rank;
                 case 7:
@@ -265,9 +277,9 @@ namespace SourceProlongation.ViewModel
                 case 8:
                     return "Не более 185 Бк";
                 case 9:
-                    return MeasValue.ToString(Format) + " " + Unit;
+                    return MeasValue.ToString("F2") + " " + Unit;
                 case 10:
-                    return CalcedVal.ToString(Format) + " " + Unit;
+                    return CalcedVal.ToString("F2") + " " + Unit;
                 case 11:
                     return "Сохранены";
                 case 12:
@@ -279,6 +291,8 @@ namespace SourceProlongation.ViewModel
 
         public SourceViewModel(Source source, DateTime docDate)
         {
+            if (source == null) return;
+
             Id = source.id;
             DocDate = docDate;
 
@@ -287,7 +301,7 @@ namespace SourceProlongation.ViewModel
             _passportNum = source.passport;
             _rank = source.rank;
             _madeYear = source.madeYear;
-            _additionalPeriod = source.extensionPeriod;
+            _extensionPeriod = source.extensionPeriod;
             _baseValueDate = source.baseValueDate;
             _baseValue = source.baseValue;
             _unit = source.unit;

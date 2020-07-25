@@ -26,10 +26,10 @@
         <elementListCompartment Id="9ddd1d44-518b-4fe2-8754-3c0b30505d90" absoluteBounds="3.7649999999999997, 2.46, 1.9700000000000002, 3.3262125651041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="334033a0-efd0-48c9-83fa-0691ae9a0fdc" isExpanded="false" absoluteBounds="3.75, 1.375, 2, 0.45">
+    <classShape Id="360ba014-99f2-47ed-90ea-ed6af14ebe38" isExpanded="false" absoluteBounds="3.75, 1.375, 2, 0.45">
       <DataClassMoniker Name="/SqlDataContext/Order" />
       <nestedChildShapes>
-        <elementListCompartment Id="e78dfc9b-6b6a-4641-b4b8-bc232394a0d3" absoluteBounds="3.7649999999999997, 1.835, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="bdc35c4c-2dbc-49e4-9d69-15e13e3ce151" absoluteBounds="3.7649999999999997, 1.835, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
   </nestedChildShapes>

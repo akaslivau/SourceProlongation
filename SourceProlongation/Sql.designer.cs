@@ -115,12 +115,8 @@ namespace SourceProlongation
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Customers")]
 	public partial class Customer : INotifyPropertyChanging, INotifyPropertyChanged
 	{
-        public override string ToString()
-        {
-            return _name;
-        }
-
-        private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
 		private int _id;
 		
@@ -373,8 +369,12 @@ namespace SourceProlongation
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Executors")]
 	public partial class Executor : INotifyPropertyChanging, INotifyPropertyChanged
 	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+        public override string ToString()
+        {
+            return _fio + "\t" + _post;
+        }
+
+        private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
 		private int _id;
 		
@@ -1036,6 +1036,8 @@ namespace SourceProlongation
 		
 		private string _status;
 		
+		private string _executors;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -1058,6 +1060,8 @@ namespace SourceProlongation
     partial void OnotherChanged();
     partial void OnstatusChanging(string value);
     partial void OnstatusChanged();
+    partial void OnexecutorsChanging(string value);
+    partial void OnexecutorsChanged();
     #endregion
 		
 		public Order()
@@ -1241,6 +1245,26 @@ namespace SourceProlongation
 					this._status = value;
 					this.SendPropertyChanged("status");
 					this.OnstatusChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_executors", DbType="NVarChar(MAX) NOT NULL", CanBeNull=false)]
+		public string executors
+		{
+			get
+			{
+				return this._executors;
+			}
+			set
+			{
+				if ((this._executors != value))
+				{
+					this.OnexecutorsChanging(value);
+					this.SendPropertyChanging();
+					this._executors = value;
+					this.SendPropertyChanged("executors");
+					this.OnexecutorsChanged();
 				}
 			}
 		}

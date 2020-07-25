@@ -57,6 +57,7 @@
       <Column Name="beginDate" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
       <Column Name="other" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
       <Column Name="status" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="executors" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
     </Type>
   </Table>
 </Database>
