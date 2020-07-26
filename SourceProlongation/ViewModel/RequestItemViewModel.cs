@@ -119,7 +119,11 @@ namespace SourceProlongation.ViewModel
         {
             using (var cntx = new SqlDataContext(Connection.ConnectionString))
             {
-                var price = cntx.GetTable<Price>().Where(x => x.workTypeId == Work.id && x.deviceId == Dev.id).ToList();
+                var price = cntx.GetTable<Price>().
+                    Where(x => x.workTypeId == Work.id && x.deviceId == Dev.id).
+                    Where(x=> Count > x.fromCount && Count <= x.toCount).
+                    ToList();
+
                 if (!price.Any())
                 {
                     Price = 0;

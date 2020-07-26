@@ -129,6 +129,27 @@ namespace SourceProlongation.Model
             }
         }
 
+        private static ObservableCollection<Rank> _ranks = null;
+        public static ObservableCollection<Rank> Ranks
+        {
+            get
+            {
+                if (_ranks == null)
+                {
+                    _ranks = new ObservableCollection<Rank>();
+
+                    using (var cntx = new SqlDataContext(Connection.ConnectionString))
+                    {
+                        foreach (var w in cntx.GetTable<Rank>().ToList())
+                        {
+                            _ranks.Add(w);
+                        }
+                    }
+                }
+                return _ranks;
+            }
+        }
+
         public static ObservableCollection<string> Statuses { get; } = new ObservableCollection<string>()
         {
             Status.Created.ToString(),
@@ -140,7 +161,10 @@ namespace SourceProlongation.Model
         };
     }
 
+    public static class Todelete
+    {
 
+    }
 
 }
 

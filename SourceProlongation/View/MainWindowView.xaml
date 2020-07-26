@@ -28,22 +28,32 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Orientation="Horizontal">
+            <Menu>
+                <MenuItem Header="Добавить" Command="{Binding AddOrderCommand}" />
+                <MenuItem Header="Удалить" Command="{Binding RemoveOrderCommand}" />
+            </Menu>
             <Menu DataContext="{Binding Selected}" >
                 <MenuItem Header="Оформить акт" Command="{Binding MakeAktCommand}" />
                 <MenuItem Header="Оформить все документы" Command="{Binding MakeDocsCommand}" />
                 <MenuItem Header="Оформить протокол мазков" Command="{Binding MakeMazkiCommand}"/>
             </Menu>
-            <Menu >
+            <Menu>
             <MenuItem Header="Только текущие работы" 
                       IsCheckable="True" 
                       IsChecked="{Binding HideFinished, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </Menu>
+            <ComboBox ItemsSource="{Binding Source={x:Static model:Collections.Ranks}}"
+                      SelectedItem="{Binding ComboboxRank, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Width="250"
+                      Height="30"
+                      Margin="{StaticResource ControlMargin}"
+            />
         </StackPanel>
 
         <ListView Grid.Row="1" Grid.Column="0"
                   ItemsSource="{Binding TableView}"
                   SelectedItem="{Binding Selected, UpdateSourceTrigger=PropertyChanged}"
-                  DisplayMemberPath="DisplayName"
+                  DisplayMemberPath="Name"
                   Name="OrdersList"
                   />
         <GridSplitter Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="5"
@@ -81,6 +91,8 @@
                                         <MenuItem Header="Свид-во?" IsCheckable="True" IsChecked="{Binding LfIsSvid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                         <MenuItem Header="Продлить на" IsCheckable="True" IsChecked="{Binding LfExtPeriod, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                     </MenuItem>
+                                    <MenuItem Header="Установить ранг" Command="{Binding SetRankCommand}" CommandParameter="{Binding ElementName=SourceTable, Path=SelectedItems}" />
+
                                 </Menu>
                                 <xctk:IntegerUpDown Grid.Column="1" Width="75" Height="25" Name="CountToAdd" Minimum="1" Value="1"/>
                             </Grid>
@@ -171,7 +183,11 @@
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
 
-                                    <DataGridTextColumn Binding="{Binding DocNumber}"
+                                    <DataGridTextColumn Width="150" Binding="{Binding Rank, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                        Header="Ранк"
+                                    />
+
+                                    <DataGridTextColumn Binding="{Binding DocNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         Header="№ док-та"
                                         />
 
@@ -432,7 +448,7 @@
                                 </DataGridTemplateColumn.CellEditingTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTemplateColumn Header="Кол-во">
+                            <DataGridTemplateColumn Header="Кол-во" Width="100">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <xctk:IntegerUpDown
@@ -478,17 +494,17 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Binding="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         Header="Наименование"
-                                        Width="*"
+                                        Width="4*"
                                         />
 
                     <DataGridTextColumn Binding="{Binding Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         Header="Тип" 
-                                        Width="200"
+                                        Width="*"
                     />
 
                     <DataGridTextColumn Binding="{Binding Reestr, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=dd-MM-yyyy}"
                                         Header="Реестр" 
-                                        Width="100"
+                                        Width="*"
                                             
                     />
                 </DataGrid.Columns>
@@ -600,8 +616,8 @@
                           CanUserDeleteRows="False"
                           CanUserAddRows="False"
                           HeadersVisibility="All"
-                          ItemsSource="{Binding Path=Devices}"
-                          SelectedItem="{Binding SelectedDevice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          ItemsSource="{Binding Path=Customers}"
+                          SelectedItem="{Binding SelectedCustomer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           RowHeaderWidth="0"
                           SelectionUnit="FullRow">
                     <DataGrid.Columns>
@@ -612,17 +628,17 @@
 
                         <DataGridTextColumn Binding="{Binding NameKomu, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                             Header="Кому?"
-                                            Width="100"
+                                            Width="*"
                         />
 
                         <DataGridTextColumn Binding="{Binding NameKogo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                             Header="Кого?"
-                                            Width="100"
+                                            Width="*"
                         />
 
                         <DataGridTextColumn Binding="{Binding NameKem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                             Header="Кем?"
-                                            Width="100"
+                                            Width="*"
                         />
 
                         <DataGridTextColumn Binding="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -646,6 +662,39 @@
                         />
 
 
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Ранг">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Menu Grid.Row="0">
+                    <MenuItem Header="Добавить" Command="{Binding AddRankCommand}"/>
+                    <MenuItem Header="Удалить" Command="{Binding RemoveRankCommand}"/>
+                </Menu>
+                <DataGrid Grid.Row="1" Margin="{StaticResource ControlMargin}"
+                          AutoGenerateColumns="False"
+                          CanUserDeleteRows="False"
+                          CanUserAddRows="False"
+                          HeadersVisibility="All"
+                          ItemsSource="{Binding Path=Ranks}"
+                          SelectedItem="{Binding SelectedRank, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          RowHeaderWidth="0"
+                          SelectionUnit="FullRow">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding Scheme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Header="Поверочная схема"
+                                            Width="200"
+                        />
+
+                        <DataGridTextColumn Binding="{Binding Rank, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Header="Ранг"
+                                            Width="*"
+                        />
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>

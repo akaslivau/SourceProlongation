@@ -16,7 +16,13 @@ namespace SourceProlongation.ViewModel
 {
     public class OrderViewModel: ViewModelBase
     {
+        private MainWindowViewModel _parent = null;
+
         #region Fields
+
+        public string Name => (SelectedCustomer == null ? oldCustomerName : SelectedCustomer.name) + " [" + Number +
+                              "-" + Year + "]"; 
+
         public int OrderId { get; }
         public int SourceCount => Sources.Count;
 
@@ -40,8 +46,10 @@ namespace SourceProlongation.ViewModel
                 if (_selectedCustomer == value) return;
                 _selectedCustomer = value;
                 OnPropertyChanged("SelectedCustomer");
+                OnPropertyChanged("Name");
 
                 if(value!=null) UpdateProperty("customerId", value.id);
+
             }
         }
 
@@ -62,6 +70,7 @@ namespace SourceProlongation.ViewModel
                 OnPropertyChanged("Number");
                 UpdateProperty("actNumber", value);
                 OnPropertyChanged("IsActNumberValid");
+                OnPropertyChanged("Name");
             }
         }
 
@@ -75,6 +84,7 @@ namespace SourceProlongation.ViewModel
                 OnPropertyChanged("Year");
                 UpdateProperty("year", value);
                 OnPropertyChanged("IsActNumberValid");
+                OnPropertyChanged("Name");
             }
         }
 
@@ -114,7 +124,8 @@ namespace SourceProlongation.ViewModel
         
         private string _other;
         public string Other { get => _other;
-            set{ _other = value; OnPropertyChanged("Other");}}
+            set{ _other = value; OnPropertyChanged("Other"); UpdateProperty("other", value); }
+        }
 
         private string _status;
         public string Status
@@ -257,6 +268,8 @@ namespace SourceProlongation.ViewModel
         public ICommand MakeAktCommand { get; private set; }
         public ICommand MakeDocsCommand { get; private set; }
         public ICommand MakeMazkiCommand { get; private set; }
+
+        public ICommand SetRankCommand { get; }
 
         private void AddSource(object obj)
         {
@@ -419,6 +432,24 @@ namespace SourceProlongation.ViewModel
                     }
                 }
             }
+        }
+
+        private void SetRank(object obj)
+        {
+            IList items = (IList)obj;
+            var sources = items.Cast<SourceViewModel>().ToList();
+            if (!sources.Any()) return;
+
+            var rank = _parent.ComboboxRank;
+            if (rank == null) return;
+
+            sources.ForEach(x =>
+                x.Rank = rank.rankv + 
+                         (
+                             !string.IsNullOrEmpty(rank.scheme) ? 
+                                 ("(" + rank.scheme + ")") 
+                                 : "")
+                         );
         }
 
         private void MakeAct(object obj)
@@ -647,13 +678,23 @@ namespace SourceProlongation.ViewModel
             doc.SaveAs(dir + "\\" + Collections.FileNames["ProtokolApplication"] + EXT);
         }
         #endregion
-        
-        public OrderViewModel(Order order)
+
+        private string oldCustomerName = "";
+
+        public OrderViewModel(Order order, MainWindowViewModel parent)
         {
-            //TODO: генератор расчета стоимости
-            //TODO: ранки и поверочные схемы
-            //TODO: работа со словарями БД
-            //TODO: delete jobs
+            _parent = parent;
+            //TODO: командировка
+            //TODO: saveToPdf
+            //TODO: что выдаем
+
+            //TODO: Где делать override, если что
+            //Customer
+            //Nucleide
+            //WorkType
+            //Device
+            //Executor
+            //Ranks
 
             OrderId = order.id;
             Sources.CollectionChanged += (a, b) => { OnPropertyChanged("SourceCount"); };
@@ -689,9 +730,7 @@ namespace SourceProlongation.ViewModel
                 }
                 _executors.CheckedChangedEvent += (a, b) => UpdateExecutors();
 
-                var cust = order.customerId < 0 ? "[!] " + order.oldCustomerName
-                    : cntx.GetTable<Customer>().Single(x => x.id == order.customerId).name;
-                base.DisplayName = cust + " " + order.actNumber + "/" + order.year;
+                oldCustomerName = order.customerId < 0 ? "[!] " + order.oldCustomerName : "";
 
                 var sources = cntx.GetTable<Source>().Where(x => x.orderId == order.id).ToList();
                 foreach (var source in sources)
@@ -710,6 +749,7 @@ namespace SourceProlongation.ViewModel
             MakeAktCommand = new RelayCommand(MakeAct, a=> SelectedCustomer !=null && IsActNumberValid);
             MakeDocsCommand = new RelayCommand(MakeDocs, a => SelectedCustomer != null && IsActNumberValid);
             MakeMazkiCommand = new RelayCommand(a => { MessageBox.Show("Not implemented!");});
+            SetRankCommand = new RelayCommand(SetRank, x => SelectedSource != null);
         }
         
         public const string EXT = ".docx";

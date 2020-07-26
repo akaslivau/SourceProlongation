@@ -17,6 +17,21 @@ namespace SourceProlongation.ViewModel
     public class MainWindowViewModel : ViewModelBase
     {
         #region Fields
+        private Rank _comboboxRank;
+        public Rank ComboboxRank
+        {
+            get
+            {
+                return _comboboxRank;
+            }
+            set
+            {
+                if (_comboboxRank == value) return;
+                _comboboxRank = value;
+                OnPropertyChanged("ComboboxRank");
+            }
+        }
+
         private bool _hideFinished = Settings.Default.hideFinished;
         public bool HideFinished
         {
@@ -183,9 +198,114 @@ namespace SourceProlongation.ViewModel
             }
         }
 
+        private ObservableCollection<CustomerViewModel> _customers;
+        public ObservableCollection<CustomerViewModel> Customers
+        {
+            get
+            {
+                return _customers;
+            }
+            set
+            {
+                if (_customers == value) return;
+                _customers = value;
+                OnPropertyChanged("Customers");
+            }
+        }
+
+        private CustomerViewModel _selectedCustomer;
+        public CustomerViewModel SelectedCustomer
+        {
+            get
+            {
+                return _selectedCustomer;
+            }
+            set
+            {
+                if (_selectedCustomer == value) return;
+                _selectedCustomer = value;
+                OnPropertyChanged("SelectedCustomer");
+            }
+        }
+
+        private ObservableCollection<RankViewModel> _ranks;
+        public ObservableCollection<RankViewModel> Ranks
+        {
+            get
+            {
+                return _ranks;
+            }
+            set
+            {
+                if (_ranks == value) return;
+                _ranks = value;
+                OnPropertyChanged("Ranks");
+            }
+        }
+
+        private RankViewModel _selectedRank;
+        public RankViewModel SelectedRank
+        {
+            get
+            {
+                return _selectedRank;
+            }
+            set
+            {
+                if (_selectedRank == value) return;
+                _selectedRank = value;
+                OnPropertyChanged("SelectedRank");
+            }
+        }
+
+
         #endregion
 
         #region Commands
+        public ICommand AddOrderCommand { get; }
+        public ICommand RemoveOrderCommand { get; }
+
+        private void AddOrder(object obj)
+        {
+            using (var cntx = new SqlDataContext(Connection.ConnectionString))
+            {
+                var model = new Order()
+                {
+                    customerId = -1,
+                    oldCustomerName = "",
+                    actNumber = 0,
+                    year = 0,
+                    beginDate = DateTime.Now.AddDays(-28),
+                    docDate = DateTime.Now,
+                    executors = "",
+                    status = Status.Created,
+                    other = ""
+                };
+
+                var table = cntx.GetTable<Order>();
+                table.InsertOnSubmit(model);
+                cntx.SubmitChanges();
+
+                Items.Add(new OrderViewModel(model, this));
+                Selected = Items.Last();
+            }
+        }
+
+        private void RemoveOrder(object obj)
+        {
+            using (var cntx = new SqlDataContext(Connection.ConnectionString))
+            {
+                var table = cntx.GetTable<Order>();
+                var toDelete = table.Single(x => x.id == Selected.OrderId);
+                table.DeleteOnSubmit(toDelete);
+                cntx.SubmitChanges();
+
+                var o = Items.Single(x => x.OrderId == toDelete.id);
+                Items.Remove(o);
+            }
+        }
+
+
         public ICommand AddRequestCommand { get; }
         public ICommand RemoveRequestCommand { get; }
 
@@ -299,6 +419,84 @@ namespace SourceProlongation.ViewModel
                 Prices.Remove(d);
             }
         }
+
+        public ICommand AddCustomerCommand { get; }
+        public ICommand RemoveCustomerCommand { get; }
+
+        private void AddCustomer(object obj)
+        {
+            using (var cntx = new SqlDataContext(Connection.ConnectionString))
+            {
+                var model = new Customer()
+                {
+                    name = "Customer",
+                    name_kogo = "",
+                    name_kem = "",
+                    name_komu = "",
+                    fio = "",
+                    email = "",
+                    phone = "",
+                    other = ""
+                };
+
+                var table = cntx.GetTable<Customer>();
+                table.InsertOnSubmit(model);
+                cntx.SubmitChanges();
+
+                Customers.Add(new CustomerViewModel(model));
+                SelectedCustomer = Customers.Last();
+            }
+        }
+
+        private void RemoveCustomer(object obj)
+        {
+            using (var cntx = new SqlDataContext(Connection.ConnectionString))
+            {
+                var table = cntx.GetTable<Customer>();
+                var toDelete = table.Single(x => x.id == SelectedCustomer.Id);
+                table.DeleteOnSubmit(toDelete);
+                cntx.SubmitChanges();
+
+                var d = Customers.Single(x => x.Id == toDelete.id);
+                Customers.Remove(d);
+            }
+        }
+
+        public ICommand AddRankCommand { get; }
+        public ICommand RemoveRankCommand { get; }
+
+        private void AddRank(object obj)
+        {
+            using (var cntx = new SqlDataContext(Connection.ConnectionString))
+            {
+                var model = new Rank()
+                {
+                    scheme = "",
+                    rankv = "Рабочий эталон 1-го разряда"
+                };
+
+                var table = cntx.GetTable<Rank>();
+                table.InsertOnSubmit(model);
+                cntx.SubmitChanges();
+
+                Ranks.Add(new RankViewModel(model));
+                SelectedRank = Ranks.Last();
+            }
+        }
+
+        private void RemoveRank(object obj)
+        {
+            using (var cntx = new SqlDataContext(Connection.ConnectionString))
+            {
+                var table = cntx.GetTable<Rank>();
+                var toDelete = table.Single(x => x.id == SelectedRank.Id);
+                table.DeleteOnSubmit(toDelete);
+                cntx.SubmitChanges();
+
+                var d = Ranks.Single(x => x.Id == toDelete.id);
+                Ranks.Remove(d);
+            }
+        }
         #endregion
 
         public ICommand WindowClosingCommand { get; private set; }
@@ -317,7 +515,7 @@ namespace SourceProlongation.ViewModel
                 var orders = cntx.GetTable<Order>();
                 foreach (var order in orders)
                 {
-                    Items.Add(new OrderViewModel(order));
+                    Items.Add(new OrderViewModel(order, this));
                 }
                 TableView = new ListCollectionView(Items);
                 TableView.Filter = Filter;
@@ -352,15 +550,37 @@ namespace SourceProlongation.ViewModel
                     Prices.Add(new PriceViewModel(p));
                 }
                 if (Prices.Any()) SelectedPrice = Prices[0];
+
+                //Customers
+                Customers = new ObservableCollection<CustomerViewModel>();
+                foreach (var p in cntx.GetTable<Customer>().ToList())
+                {
+                    Customers.Add(new CustomerViewModel(p));
+                }
+                if (Customers.Any()) SelectedCustomer = Customers[0];
+
+                //Ranks
+                Ranks = new ObservableCollection<RankViewModel>();
+                foreach (var p in cntx.GetTable<Rank>().ToList())
+                {
+                    Ranks.Add(new RankViewModel(p));
+                }
+                if (Ranks.Any()) SelectedRank = Ranks[0];
             }
 
             //Commands
+            AddOrderCommand = new RelayCommand(AddOrder);
+            RemoveOrderCommand = new RelayCommand(RemoveOrder, a => Selected != null);
             AddRequestCommand = new RelayCommand(AddRequest);
             RemoveRequestCommand = new RelayCommand(RemoveRequest, a => SelectedRequest != null);
             AddDeviceCommand = new RelayCommand(AddDevice);
             RemoveDeviceCommand = new RelayCommand(RemoveDevice, a=> SelectedDevice!=null);
             AddPriceCommand = new RelayCommand(AddPrice);
             RemovePriceCommand = new RelayCommand(RemovePrice, a => SelectedPrice != null);
+            AddCustomerCommand = new RelayCommand(AddCustomer);
+            RemoveCustomerCommand = new RelayCommand(RemoveCustomer, a => SelectedCustomer != null);
+            AddRankCommand = new RelayCommand(AddRank);
+            RemoveRankCommand = new RelayCommand(RemoveRank, a => SelectedRank != null);
         }
 
         private bool Filter(object obj)

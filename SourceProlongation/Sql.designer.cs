@@ -63,6 +63,9 @@ namespace SourceProlongation
     partial void InsertPrice(Price instance);
     partial void UpdatePrice(Price instance);
     partial void DeletePrice(Price instance);
+    partial void InsertRank(Rank instance);
+    partial void UpdateRank(Rank instance);
+    partial void DeleteRank(Rank instance);
     #endregion
 		
 		public SqlDataContext(string connection) : 
@@ -176,13 +179,25 @@ namespace SourceProlongation
 				return this.GetTable<Price>();
 			}
 		}
+		
+		public System.Data.Linq.Table<Rank> Ranks
+		{
+			get
+			{
+				return this.GetTable<Rank>();
+			}
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Customers")]
 	public partial class Customer : INotifyPropertyChanging, INotifyPropertyChanged
 	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+        public override string ToString()
+        {
+            return _name;
+        }
+
+        private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
 		private int _id;
 		
@@ -553,7 +568,6 @@ namespace SourceProlongation
         {
             return _name;
         }
-
         private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
 		private int _id;
@@ -1979,7 +1993,6 @@ namespace SourceProlongation
         {
             return _name + " " + _type;
         }
-
         private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
 		private int _id;
@@ -2267,6 +2280,120 @@ namespace SourceProlongation
 					this._pricePerItem = value;
 					this.SendPropertyChanged("pricePerItem");
 					this.OnpricePerItemChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Ranks")]
+	public partial class Rank : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+        public override string ToString()
+        {
+            return _rankv + "(" + _scheme + ")";
+        }
+
+        private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _id;
+		
+		private string _scheme;
+		
+		private string _rankv;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnidChanging(int value);
+    partial void OnidChanged();
+    partial void OnschemeChanging(string value);
+    partial void OnschemeChanged();
+    partial void OnrankvChanging(string value);
+    partial void OnrankvChanged();
+    #endregion
+		
+		public Rank()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int id
+		{
+			get
+			{
+				return this._id;
+			}
+			set
+			{
+				if ((this._id != value))
+				{
+					this.OnidChanging(value);
+					this.SendPropertyChanging();
+					this._id = value;
+					this.SendPropertyChanged("id");
+					this.OnidChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_scheme", DbType="NVarChar(MAX) NOT NULL", CanBeNull=false)]
+		public string scheme
+		{
+			get
+			{
+				return this._scheme;
+			}
+			set
+			{
+				if ((this._scheme != value))
+				{
+					this.OnschemeChanging(value);
+					this.SendPropertyChanging();
+					this._scheme = value;
+					this.SendPropertyChanged("scheme");
+					this.OnschemeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_rankv", DbType="NVarChar(MAX) NOT NULL", CanBeNull=false)]
+		public string rankv
+		{
+			get
+			{
+				return this._rankv;
+			}
+			set
+			{
+				if ((this._rankv != value))
+				{
+					this.OnrankvChanging(value);
+					this.SendPropertyChanging();
+					this._rankv = value;
+					this.SendPropertyChanged("rankv");
+					this.OnrankvChanged();
 				}
 			}
 		}

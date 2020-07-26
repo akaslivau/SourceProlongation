@@ -100,11 +100,13 @@
     <Compile Include="Usercontrols\SourceBox.xaml.cs">
       <DependentUpon>SourceBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModel\CustomerViewModel.cs" />
     <Compile Include="ViewModel\DeviceViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\NucleideViewModel.cs" />
     <Compile Include="ViewModel\OrderViewModel.cs" />
     <Compile Include="ViewModel\PriceViewModel.cs" />
+    <Compile Include="ViewModel\RankViewModel.cs" />
     <Compile Include="ViewModel\RequestItemViewModel.cs" />
     <Compile Include="ViewModel\RequestViewModel.cs" />
     <Compile Include="ViewModel\SourceViewModel.cs" />
