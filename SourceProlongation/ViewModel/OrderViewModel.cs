@@ -260,46 +260,60 @@ namespace SourceProlongation.ViewModel
 
         private void AddSource(object obj)
         {
+            var cnt = (int) obj;
             using (var cntx = new SqlDataContext(Connection.ConnectionString))
             {
-                var model = new Source()
+                for (int i = 0; i < cnt; i++)
                 {
-                    orderId = OrderId,
-                    nucleideId = 0,
-                    type = "",
-                    number = "",
-                    passport = "",
-                    rank = "",
-                    madeYear = -1,
-                    extensionPeriod = -1,
-                    baseValueDate = DateTime.MinValue,
-                    baseValue = 0,
-                    unit = "",
-                    measValue = 0,
-                    measDate = DateTime.MinValue,
-                    docNumber = "",
-                    isSvid = true
-                };
+                    var model = new Source()
+                    {
+                        orderId = OrderId,
+                        nucleideId = 0,
+                        type = "",
+                        number = "",
+                        passport = "",
+                        rank = "",
+                        madeYear = -1,
+                        extensionPeriod = -1,
+                        baseValueDate = DateTime.MinValue,
+                        baseValue = 0,
+                        unit = "",
+                        measValue = 0,
+                        measDate = DateTime.MinValue,
+                        docNumber = "",
+                        isSvid = true
+                    };
 
-                var sourcesTable = cntx.GetTable<Source>();
-                sourcesTable.InsertOnSubmit(model);
-                cntx.SubmitChanges();
+                    var sourcesTable = cntx.GetTable<Source>();
+                    sourcesTable.InsertOnSubmit(model);
+                    cntx.SubmitChanges();
 
-                Sources.Add(new SourceViewModel(model, _docDate));
+                    Sources.Add(new SourceViewModel(model, _docDate));
+                }
                 SelectedSource = Sources.Last();
             }
         }
 
         private void RemoveSource(object obj)
         {
-            using (var cntx = new SqlDataContext(Connection.ConnectionString))
-            {
-                var sourcesTable = cntx.GetTable<Source>();
-                var toDelete = sourcesTable.Single(x => x.id == SelectedSource.Id);
-                sourcesTable.DeleteOnSubmit(toDelete);
-                cntx.SubmitChanges();
+            IList items = (IList)obj;
+            var sources = items.Cast<SourceViewModel>().ToList();
+            if (!sources.Any()) return;
 
-                Sources.Remove(SelectedSource);
+            var ids = sources.Select(x => x.Id).ToList();
+
+            foreach (var id in ids)
+            {
+                using (var cntx = new SqlDataContext(Connection.ConnectionString))
+                {
+                    var sourcesTable = cntx.GetTable<Source>();
+                    var toDelete = sourcesTable.Single(x => x.id == id);
+                    sourcesTable.DeleteOnSubmit(toDelete);
+                    cntx.SubmitChanges();
+
+                    var src = Sources.Single(x => x.Id == id);
+                    Sources.Remove(src);
+                }
             }
         }
 
@@ -638,6 +652,8 @@ namespace SourceProlongation.ViewModel
         {
             //TODO: генератор расчета стоимости
             //TODO: ранки и поверочные схемы
+            //TODO: работа со словарями БД
+            //TODO: delete jobs
 
             OrderId = order.id;
             Sources.CollectionChanged += (a, b) => { OnPropertyChanged("SourceCount"); };

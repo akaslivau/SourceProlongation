@@ -65,7 +65,70 @@ namespace SourceProlongation.Model
                 return _customers;
             }
         }
-        
+
+        private static ObservableCollection<WorkType> _workTypes = null;
+        public static ObservableCollection<WorkType> WorkTypes
+        {
+            get
+            {
+                if (_workTypes == null)
+                {
+                    _workTypes = new ObservableCollection<WorkType>();
+
+                    using (var cntx = new SqlDataContext(Connection.ConnectionString))
+                    {
+                        foreach (var w in cntx.GetTable<WorkType>().ToList())
+                        {
+                            _workTypes.Add(w);
+                        }
+                    }
+                }
+                return _workTypes;
+            }
+        }
+
+        private static ObservableCollection<Device> _devices = null;
+        public static ObservableCollection<Device> Devices
+        {
+            get
+            {
+                if (_devices == null)
+                {
+                    _devices = new ObservableCollection<Device>();
+
+                    using (var cntx = new SqlDataContext(Connection.ConnectionString))
+                    {
+                        foreach (var w in cntx.GetTable<Device>().ToList())
+                        {
+                            _devices.Add(w);
+                        }
+                    }
+                }
+                return _devices;
+            }
+        }
+
+        private static ObservableCollection<Price> _prices = null;
+        public static ObservableCollection<Price> Prices
+        {
+            get
+            {
+                if (_prices == null)
+                {
+                    _prices = new ObservableCollection<Price>();
+
+                    using (var cntx = new SqlDataContext(Connection.ConnectionString))
+                    {
+                        foreach (var w in cntx.GetTable<Price>().ToList())
+                        {
+                            _prices.Add(w);
+                        }
+                    }
+                }
+                return _prices;
+            }
+        }
+
         public static ObservableCollection<string> Statuses { get; } = new ObservableCollection<string>()
         {
             Status.Created.ToString(),
@@ -76,6 +139,9 @@ namespace SourceProlongation.Model
             Status.Finished
         };
     }
+
+
+
 }
 
 
