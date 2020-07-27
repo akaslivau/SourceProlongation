@@ -45,6 +45,11 @@ namespace SourceProlongation.ViewModel
             }
         }
 
+        private ObservableCollection<TripViewModel> _trips = new ObservableCollection<TripViewModel>();
+        public ObservableCollection<TripViewModel> Trips { get { return _trips;} set{ _trips = value; OnPropertyChanged("Trips");}}
+
+        private TripViewModel _selectedTrip = null;
+        public TripViewModel SelectedTrip { get { return _selectedTrip;} set{ _selectedTrip = value; OnPropertyChanged("SelectedTrip");}}
 
         public string CustomerName => SelectedCustomer.name;
 
@@ -157,6 +162,44 @@ namespace SourceProlongation.ViewModel
                 Items.Remove(req);
             }
         }
+
+        public ICommand AddTripCommand { get; }
+        public ICommand RemoveTripCommand { get; }
+
+        private void AddTrip(object obj)
+        {
+            using (var cntx = new SqlDataContext(Connection.ConnectionString))
+            {
+                var model = new RequestTrip()
+                {
+                    requestId = Id,
+                    destination = "Москва",
+                    days = 5,
+                    other = ""
+                };
+
+                var table = cntx.GetTable<RequestTrip>();
+                table.InsertOnSubmit(model);
+                cntx.SubmitChanges();
+
+                Trips.Add(new TripViewModel(model));
+                SelectedTrip = Trips.Last();
+            }
+        }
+
+        private void RemoveTrip(object obj)
+        {
+            using (var cntx = new SqlDataContext(Connection.ConnectionString))
+            {
+                var table = cntx.GetTable<RequestTrip>();
+                var toDelete = table.Single(x => x.id == SelectedTrip.Id);
+                table.DeleteOnSubmit(toDelete);
+                cntx.SubmitChanges();
+
+                var req = Trips.Single(x => x.Id == toDelete.id);
+                Trips.Remove(req);
+            }
+        }
         #endregion
 
         public RequestViewModel(Request request)
@@ -179,12 +222,21 @@ namespace SourceProlongation.ViewModel
                 }
 
                 if (Items.Any()) SelectedWork = Items[0];
-            }
 
+                var trips = cntx.GetTable<RequestTrip>().Where(x => x.requestId == Id).ToList();
+                foreach (var t in trips)
+                {
+                    Trips.Add(new TripViewModel(t));
+                }
+
+                if (Trips.Any()) SelectedTrip = Trips[0];
+            }
             
             //Commands
             AddRequestItemCommand = new RelayCommand(AddRequestItem);
             RemoveRequestItemCommand = new RelayCommand(RemoveRequestItem, a => SelectedWork != null);
+            AddTripCommand = new RelayCommand(AddTrip);
+            RemoveTripCommand = new RelayCommand(RemoveTrip, a => SelectedTrip != null);
         }
 
         private void UpdateProperty(string propertyName, object value)

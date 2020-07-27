@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -8,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Novacode;
 using SourceProlongation.Base;
 using SourceProlongation.Model;
 using SourceProlongation.Properties;
@@ -265,6 +267,7 @@ namespace SourceProlongation.ViewModel
         public ICommand AddOrderCommand { get; }
         public ICommand RemoveOrderCommand { get; }
 
+
         private void AddOrder(object obj)
         {
             using (var cntx = new SqlDataContext(Connection.ConnectionString))
@@ -308,6 +311,7 @@ namespace SourceProlongation.ViewModel
 
         public ICommand AddRequestCommand { get; }
         public ICommand RemoveRequestCommand { get; }
+        public ICommand ExportRequestCommand { get; }
 
         private void AddRequest(object obj)
         {
@@ -342,6 +346,119 @@ namespace SourceProlongation.ViewModel
                 var req = Requests.Single(x => x.Id == toDelete.id);
                 Requests.Remove(req);
             }
+        }
+
+        private const string REQUEST_FILE = "Request.docx";
+
+        private bool IsMultDoc(string name)
+        {
+            return name.Contains("оверк") || name.Contains("алибровк") || name.Contains("ттестац");
+        }
+        private void ExportRequest(object obj)
+        {
+            var r = SelectedRequest;
+
+            var doc = DocX.Load(REQUEST_FILE);
+
+            doc.ReplaceText("#Customer#", r.CustomerName);
+            doc.ReplaceText("#OrderNum#", r.IncomingNumber);
+            doc.ReplaceText("#OrderDate#", r.IncomingDate.ToShortDateString());
+            //Given docs
+            var weGive = r.Items.Select(x => x.Work).ToList();
+            var lst = new List<string>();
+            foreach (var w in weGive)
+            {
+                lst.AddRange(w.docsToGive.Split(';'));
+            }
+
+            lst = lst.Distinct().ToList();
+            var dict = lst.ToDictionary(x => x, x => new int());
+            foreach (var it in r.Items)
+            {
+                var splt = it.Work.docsToGive.Split(';');
+                foreach (var s in splt)
+                {
+                    if (IsMultDoc(s)) dict[s] += it.Count;
+                }
+            }
+
+            var toWrite = string.Join("\n",dict.Select(x => x.Value > 0 ? 
+                x.Key + " - " + x.Value + " шт." :
+                x.Key
+            ).ToList());
+            
+            doc.ReplaceText("#GivenDocs#", toWrite);
+            //CustomerDocs
+            var op = (from a in r.Items.Select(x => x.Work.custDocs)
+                from b in a.Split(';')
+                select b).Distinct().Where(x=>x.Length>1).ToList();
+
+            doc.ReplaceText("#CustomerDocs#", string.Join("\n", op));
+
+
+            var table = doc.Tables[1];
+            int rowIndex = 1;
+            foreach (var item in r.Items)
+            {
+                table.InsertRow(rowIndex);
+                var row = table.Rows[rowIndex];
+
+                var txt = new string[]
+                {
+                    item.Work.name,
+                    item.Dev.ToString(),
+                    item.Count.ToString(),
+                    item.Count.ToString() + " x " + (int)(item.Price/item.Count) + " = " + item.Price,
+                    item.Other
+                };
+
+                for (int i = 0; i < txt.Length; i++)
+                {
+                    var num = row.Cells[i].Paragraphs[0].Append(txt[i]);
+                    num.FontSize(12);
+                    num.Alignment = Alignment.center;
+                    num.Font(new FontFamily("Times New Roman"));
+                }
+                rowIndex++;
+            }
+
+            var tripTable = doc.Tables[2];
+            if (!r.Trips.Any())
+            {
+                doc.ReplaceText("#TRIPS#", "");
+                tripTable.Remove();
+                doc.SaveAs("test.docx");
+                return;
+            }
+            doc.ReplaceText("#TRIPS#", "КОМАНДИРОВКИ");
+            rowIndex = 1;
+            foreach (var item in r.Trips)
+            {
+                tripTable.InsertRow(rowIndex);
+                var row = tripTable.Rows[rowIndex];
+
+                var txt = new string[]
+                {
+                    item.Place,
+                    "1 чел. на " + item.Days + " к.д.",
+                    item.Sum.ToString(),
+                    item.Other
+                };
+
+                for (int i = 0; i < txt.Length; i++)
+                {
+                    var num = row.Cells[i].Paragraphs[0].Append(txt[i]);
+                    num.FontSize(12);
+                    num.Alignment = Alignment.center;
+                    num.Font(new FontFamily("Times New Roman"));
+                }
+                rowIndex++;
+            }
+
+            var path = string.Join(" ",
+                MyStatic.CleanName(SelectedRequest.CustomerName),
+                MyStatic.CleanName(SelectedRequest.IncomingNumber));
+            doc.SaveAs(path + ".docx");
         }
 
         public ICommand AddDeviceCommand { get; }
@@ -573,6 +690,7 @@ namespace SourceProlongation.ViewModel
             RemoveOrderCommand = new RelayCommand(RemoveOrder, a => Selected != null);
             AddRequestCommand = new RelayCommand(AddRequest);
             RemoveRequestCommand = new RelayCommand(RemoveRequest, a => SelectedRequest != null);
+            ExportRequestCommand = new RelayCommand(ExportRequest, a => SelectedRequest != null);
             AddDeviceCommand = new RelayCommand(AddDevice);
             RemoveDeviceCommand = new RelayCommand(RemoveDevice, a=> SelectedDevice!=null);
             AddPriceCommand = new RelayCommand(AddPrice);

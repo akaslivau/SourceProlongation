@@ -48,15 +48,9 @@ namespace SourceProlongation
     partial void InsertRequest(Request instance);
     partial void UpdateRequest(Request instance);
     partial void DeleteRequest(Request instance);
-    partial void InsertRequestTrip(RequestTrip instance);
-    partial void UpdateRequestTrip(RequestTrip instance);
-    partial void DeleteRequestTrip(RequestTrip instance);
     partial void InsertRequestItem(RequestItem instance);
     partial void UpdateRequestItem(RequestItem instance);
     partial void DeleteRequestItem(RequestItem instance);
-    partial void InsertWorkType(WorkType instance);
-    partial void UpdateWorkType(WorkType instance);
-    partial void DeleteWorkType(WorkType instance);
     partial void InsertDevice(Device instance);
     partial void UpdateDevice(Device instance);
     partial void DeleteDevice(Device instance);
@@ -66,6 +60,12 @@ namespace SourceProlongation
     partial void InsertRank(Rank instance);
     partial void UpdateRank(Rank instance);
     partial void DeleteRank(Rank instance);
+    partial void InsertWorkType(WorkType instance);
+    partial void UpdateWorkType(WorkType instance);
+    partial void DeleteWorkType(WorkType instance);
+    partial void InsertRequestTrip(RequestTrip instance);
+    partial void UpdateRequestTrip(RequestTrip instance);
+    partial void DeleteRequestTrip(RequestTrip instance);
     #endregion
 		
 		public SqlDataContext(string connection) : 
@@ -140,27 +140,11 @@ namespace SourceProlongation
 			}
 		}
 		
-		public System.Data.Linq.Table<RequestTrip> RequestTrips
-		{
-			get
-			{
-				return this.GetTable<RequestTrip>();
-			}
-		}
-		
 		public System.Data.Linq.Table<RequestItem> RequestItems
 		{
 			get
 			{
 				return this.GetTable<RequestItem>();
-			}
-		}
-		
-		public System.Data.Linq.Table<WorkType> WorkTypes
-		{
-			get
-			{
-				return this.GetTable<WorkType>();
 			}
 		}
 		
@@ -185,6 +169,22 @@ namespace SourceProlongation
 			get
 			{
 				return this.GetTable<Rank>();
+			}
+		}
+		
+		public System.Data.Linq.Table<WorkType> WorkTypes
+		{
+			get
+			{
+				return this.GetTable<WorkType>();
+			}
+		}
+		
+		public System.Data.Linq.Table<RequestTrip> RequestTrips
+		{
+			get
+			{
+				return this.GetTable<RequestTrip>();
 			}
 		}
 	}
@@ -454,7 +454,6 @@ namespace SourceProlongation
         {
             return _fio + "\t" + _post;
         }
-
         private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
 		private int _id;
@@ -1532,164 +1531,6 @@ namespace SourceProlongation
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.RequestTrips")]
-	public partial class RequestTrip : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _id;
-		
-		private int _requestId;
-		
-		private int _days;
-		
-		private string _destination;
-		
-		private string _other;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnidChanging(int value);
-    partial void OnidChanged();
-    partial void OnrequestIdChanging(int value);
-    partial void OnrequestIdChanged();
-    partial void OndaysChanging(int value);
-    partial void OndaysChanged();
-    partial void OndestinationChanging(string value);
-    partial void OndestinationChanged();
-    partial void OnotherChanging(string value);
-    partial void OnotherChanged();
-    #endregion
-		
-		public RequestTrip()
-		{
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int id
-		{
-			get
-			{
-				return this._id;
-			}
-			set
-			{
-				if ((this._id != value))
-				{
-					this.OnidChanging(value);
-					this.SendPropertyChanging();
-					this._id = value;
-					this.SendPropertyChanged("id");
-					this.OnidChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_requestId", DbType="Int NOT NULL")]
-		public int requestId
-		{
-			get
-			{
-				return this._requestId;
-			}
-			set
-			{
-				if ((this._requestId != value))
-				{
-					this.OnrequestIdChanging(value);
-					this.SendPropertyChanging();
-					this._requestId = value;
-					this.SendPropertyChanged("requestId");
-					this.OnrequestIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_days", DbType="Int NOT NULL")]
-		public int days
-		{
-			get
-			{
-				return this._days;
-			}
-			set
-			{
-				if ((this._days != value))
-				{
-					this.OndaysChanging(value);
-					this.SendPropertyChanging();
-					this._days = value;
-					this.SendPropertyChanged("days");
-					this.OndaysChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_destination", DbType="NVarChar(MAX) NOT NULL", CanBeNull=false)]
-		public string destination
-		{
-			get
-			{
-				return this._destination;
-			}
-			set
-			{
-				if ((this._destination != value))
-				{
-					this.OndestinationChanging(value);
-					this.SendPropertyChanging();
-					this._destination = value;
-					this.SendPropertyChanged("destination");
-					this.OndestinationChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_other", DbType="NVarChar(MAX) NOT NULL", CanBeNull=false)]
-		public string other
-		{
-			get
-			{
-				return this._other;
-			}
-			set
-			{
-				if ((this._other != value))
-				{
-					this.OnotherChanging(value);
-					this.SendPropertyChanging();
-					this._other = value;
-					this.SendPropertyChanged("other");
-					this.OnotherChanged();
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.RequestItems")]
 	public partial class RequestItem : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -1871,96 +1712,6 @@ namespace SourceProlongation
 					this._other = value;
 					this.SendPropertyChanged("other");
 					this.OnotherChanged();
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.WorkTypes")]
-	public partial class WorkType : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-        public override string ToString()
-        {
-            return _name;
-        }
-
-        private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _id;
-		
-		private string _name;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnidChanging(int value);
-    partial void OnidChanged();
-    partial void OnnameChanging(string value);
-    partial void OnnameChanged();
-    #endregion
-		
-		public WorkType()
-		{
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int id
-		{
-			get
-			{
-				return this._id;
-			}
-			set
-			{
-				if ((this._id != value))
-				{
-					this.OnidChanging(value);
-					this.SendPropertyChanging();
-					this._id = value;
-					this.SendPropertyChanged("id");
-					this.OnidChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_name", DbType="NVarChar(MAX) NOT NULL", CanBeNull=false)]
-		public string name
-		{
-			get
-			{
-				return this._name;
-			}
-			set
-			{
-				if ((this._name != value))
-				{
-					this.OnnameChanging(value);
-					this.SendPropertyChanging();
-					this._name = value;
-					this.SendPropertyChanged("name");
-					this.OnnameChanged();
 				}
 			}
 		}
@@ -2310,9 +2061,8 @@ namespace SourceProlongation
 	{
         public override string ToString()
         {
-            return _rankv + "(" + _scheme + ")";
+            return _rankv + "-" + _scheme;
         }
-
         private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
 		private int _id;
@@ -2394,6 +2144,325 @@ namespace SourceProlongation
 					this._rankv = value;
 					this.SendPropertyChanged("rankv");
 					this.OnrankvChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.WorkTypes")]
+	public partial class WorkType : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+        public override string ToString()
+        {
+            return _name;
+        }
+        private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _id;
+		
+		private string _name;
+		
+		private string _docsToGive;
+		
+		private string _custDocs;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnidChanging(int value);
+    partial void OnidChanged();
+    partial void OnnameChanging(string value);
+    partial void OnnameChanged();
+    partial void OndocsToGiveChanging(string value);
+    partial void OndocsToGiveChanged();
+    partial void OncustDocsChanging(string value);
+    partial void OncustDocsChanged();
+    #endregion
+		
+		public WorkType()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int id
+		{
+			get
+			{
+				return this._id;
+			}
+			set
+			{
+				if ((this._id != value))
+				{
+					this.OnidChanging(value);
+					this.SendPropertyChanging();
+					this._id = value;
+					this.SendPropertyChanged("id");
+					this.OnidChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_name", DbType="NVarChar(MAX) NOT NULL", CanBeNull=false)]
+		public string name
+		{
+			get
+			{
+				return this._name;
+			}
+			set
+			{
+				if ((this._name != value))
+				{
+					this.OnnameChanging(value);
+					this.SendPropertyChanging();
+					this._name = value;
+					this.SendPropertyChanged("name");
+					this.OnnameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_docsToGive", DbType="NVarChar(MAX) NOT NULL", CanBeNull=false)]
+		public string docsToGive
+		{
+			get
+			{
+				return this._docsToGive;
+			}
+			set
+			{
+				if ((this._docsToGive != value))
+				{
+					this.OndocsToGiveChanging(value);
+					this.SendPropertyChanging();
+					this._docsToGive = value;
+					this.SendPropertyChanged("docsToGive");
+					this.OndocsToGiveChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_custDocs", DbType="NVarChar(MAX) NOT NULL", CanBeNull=false)]
+		public string custDocs
+		{
+			get
+			{
+				return this._custDocs;
+			}
+			set
+			{
+				if ((this._custDocs != value))
+				{
+					this.OncustDocsChanging(value);
+					this.SendPropertyChanging();
+					this._custDocs = value;
+					this.SendPropertyChanged("custDocs");
+					this.OncustDocsChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.RequestTrips")]
+	public partial class RequestTrip : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _id;
+		
+		private int _requestId;
+		
+		private int _days;
+		
+		private double _sum;
+		
+		private string _destination;
+		
+		private string _other;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnidChanging(int value);
+    partial void OnidChanged();
+    partial void OnrequestIdChanging(int value);
+    partial void OnrequestIdChanged();
+    partial void OndaysChanging(int value);
+    partial void OndaysChanged();
+    partial void OnsumChanging(double value);
+    partial void OnsumChanged();
+    partial void OndestinationChanging(string value);
+    partial void OndestinationChanged();
+    partial void OnotherChanging(string value);
+    partial void OnotherChanged();
+    #endregion
+		
+		public RequestTrip()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int id
+		{
+			get
+			{
+				return this._id;
+			}
+			set
+			{
+				if ((this._id != value))
+				{
+					this.OnidChanging(value);
+					this.SendPropertyChanging();
+					this._id = value;
+					this.SendPropertyChanged("id");
+					this.OnidChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_requestId", DbType="Int NOT NULL")]
+		public int requestId
+		{
+			get
+			{
+				return this._requestId;
+			}
+			set
+			{
+				if ((this._requestId != value))
+				{
+					this.OnrequestIdChanging(value);
+					this.SendPropertyChanging();
+					this._requestId = value;
+					this.SendPropertyChanged("requestId");
+					this.OnrequestIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_days", DbType="Int NOT NULL")]
+		public int days
+		{
+			get
+			{
+				return this._days;
+			}
+			set
+			{
+				if ((this._days != value))
+				{
+					this.OndaysChanging(value);
+					this.SendPropertyChanging();
+					this._days = value;
+					this.SendPropertyChanged("days");
+					this.OndaysChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_sum", DbType="Float NOT NULL")]
+		public double sum
+		{
+			get
+			{
+				return this._sum;
+			}
+			set
+			{
+				if ((this._sum != value))
+				{
+					this.OnsumChanging(value);
+					this.SendPropertyChanging();
+					this._sum = value;
+					this.SendPropertyChanged("sum");
+					this.OnsumChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_destination", DbType="NVarChar(MAX) NOT NULL", CanBeNull=false)]
+		public string destination
+		{
+			get
+			{
+				return this._destination;
+			}
+			set
+			{
+				if ((this._destination != value))
+				{
+					this.OndestinationChanging(value);
+					this.SendPropertyChanging();
+					this._destination = value;
+					this.SendPropertyChanged("destination");
+					this.OndestinationChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_other", DbType="NVarChar(MAX) NOT NULL", CanBeNull=false)]
+		public string other
+		{
+			get
+			{
+				return this._other;
+			}
+			set
+			{
+				if ((this._other != value))
+				{
+					this.OnotherChanging(value);
+					this.SendPropertyChanging();
+					this._other = value;
+					this.SendPropertyChanged("other");
+					this.OnotherChanged();
 				}
 			}
 		}

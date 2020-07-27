@@ -320,7 +320,7 @@
                     <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" >
                         <MenuItem Header="Новая заявка" Command="{Binding AddRequestCommand}"/>
                         <MenuItem Header="Удалить" Command="{Binding RemoveRequestCommand}"/>
-                        <MenuItem Header="Сохранить в PDF"/>
+                        <MenuItem Header="Сохранить в PDF" Command="{Binding ExportRequestCommand}"/>
                     </Menu>
 
                 <DataGrid Grid.Row="1" Grid.Column="0"
@@ -357,6 +357,8 @@
 
                 <Grid Grid.Row="1" Grid.Column="2" DataContext="{Binding ElementName=RequestTable, Path=SelectedItem}">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -466,6 +468,59 @@
                             <DataGridTextColumn Binding="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                 Header="Итого, руб."
                                                 IsReadOnly="True"
+                            />
+
+                            <DataGridTextColumn Binding="{Binding Other, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                Header="Примечание"
+                                                Width="*"
+                            />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Menu Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" >
+                        <MenuItem Header="Новая командировка" Command="{Binding AddTripCommand}"/>
+                        <MenuItem Header="Удалить" Command="{Binding RemoveTripCommand}"/>
+                    </Menu>
+                    <DataGrid Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="3"
+                              Margin="{StaticResource ControlMargin}"
+                              AutoGenerateColumns="False"
+                              CanUserDeleteRows="False"
+                              CanUserAddRows="False"
+                              HeadersVisibility="All"
+                              ItemsSource="{Binding Path=Trips}"
+                              SelectedItem="{Binding SelectedTrip, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              RowHeaderWidth="0"
+                              SelectionUnit="FullRow">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Binding="{Binding Place, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                Header="Место назначения"
+                                                Width="2*"
+                            />
+
+                            <DataGridTemplateColumn Header="Кол-во дней" Width="150">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <xctk:IntegerUpDown
+                                            Value="{Binding Days, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                            />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="Стоимость" Width="150">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <xctk:DoubleUpDown
+                                            Increment="5000"
+                                            Minimum="0"
+                                            Value="{Binding Sum, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                        />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTextColumn Binding="{Binding Other, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                Header="Примечание"
+                                                Width="*"
                             />
                         </DataGrid.Columns>
                     </DataGrid>

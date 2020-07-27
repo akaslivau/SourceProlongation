@@ -684,10 +684,6 @@ namespace SourceProlongation.ViewModel
         public OrderViewModel(Order order, MainWindowViewModel parent)
         {
             _parent = parent;
-            //TODO: командировка
-            //TODO: saveToPdf
-            //TODO: что выдаем
-
             //TODO: Где делать override, если что
             //Customer
             //Nucleide

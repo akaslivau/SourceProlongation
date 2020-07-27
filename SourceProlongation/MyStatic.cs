@@ -18,5 +18,14 @@ namespace SourceProlongation
             return Path.GetInvalidPathChars()
                 .Aggregate(path, (current, c) => current.Replace(c.ToString(), String.Empty));
         }
+
+        public static string CleanName(string sh)
+        {
+            var op = Path.GetInvalidPathChars()
+                .Aggregate(sh, (current, c) => current.Replace(c.ToString(), String.Empty));
+            op = op.Replace("\\", "-");
+            op = op.Replace("/", "-");
+            return op;
+        }
     }
 }
