@@ -117,6 +117,8 @@ namespace SourceProlongation.ViewModel
 
         private void UpdatePrice()
         {
+            if (Work == null || Dev == null) return;
+
             using (var cntx = new SqlDataContext(Connection.ConnectionString))
             {
                 var price = cntx.GetTable<Price>().

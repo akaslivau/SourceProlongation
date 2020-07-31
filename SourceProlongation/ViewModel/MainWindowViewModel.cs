@@ -415,19 +415,24 @@ namespace SourceProlongation.ViewModel
                 for (int i = 0; i < txt.Length; i++)
                 {
                     var num = row.Cells[i].Paragraphs[0].Append(txt[i]);
-                    num.FontSize(12);
+                    num.FontSize(11);
                     num.Alignment = Alignment.center;
                     num.Font(new FontFamily("Times New Roman"));
                 }
                 rowIndex++;
             }
 
+            var path = string.Join(" ",
+                MyStatic.CleanName(SelectedRequest.CustomerName),
+                MyStatic.CleanName(SelectedRequest.IncomingNumber));
+
             var tripTable = doc.Tables[2];
             if (!r.Trips.Any())
             {
                 doc.ReplaceText("#TRIPS#", "");
                 tripTable.Remove();
-                doc.SaveAs("test.docx");
+
+                doc.SaveAs(path + ".docx");
                 return;
             }
             doc.ReplaceText("#TRIPS#", "КОМАНДИРОВКИ");
@@ -448,16 +453,13 @@ namespace SourceProlongation.ViewModel
                 for (int i = 0; i < txt.Length; i++)
                 {
                     var num = row.Cells[i].Paragraphs[0].Append(txt[i]);
-                    num.FontSize(12);
+                    num.FontSize(11);
                     num.Alignment = Alignment.center;
                     num.Font(new FontFamily("Times New Roman"));
                 }
                 rowIndex++;
             }
 
-            var path = string.Join(" ",
-                MyStatic.CleanName(SelectedRequest.CustomerName),
-                MyStatic.CleanName(SelectedRequest.IncomingNumber));
             doc.SaveAs(path + ".docx");
         }
 
